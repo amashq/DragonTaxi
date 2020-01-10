@@ -14,10 +14,6 @@ public class Dragon {
     private boolean busy;
     private boolean patient;
 
-//    @ElementCollection(targetClass = ClDragon.class, fetch = FetchType.EAGER)
-//    @CollectionTable(name = "dragon_class", joinColumns = @JoinColumn(name = "dragon_id"))
-//    @Enumerated(EnumType.STRING)
-//    private Set<ClDragon> classDragon;
     @Column(name = "class_dragon")
     @Enumerated(EnumType.STRING)
     private ClDragon classDragon;

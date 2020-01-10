@@ -54,17 +54,17 @@ public class UserController {
     public String getProfile(Model model, @AuthenticationPrincipal User user){
         model.addAttribute("username", user.getUsername());
 //        model.addAttribute("password", user.getPassword());//НЕ БЫЛО!!! ДОБАВИЛА!!!
-        model.addAttribute("phoneNumber", user.getPhoneNumber());
+//        model.addAttribute("phoneNumber", user.getPhoneNumber());
 
         return "profile";
     }
 
     @PostMapping("/user/profile")
     public String updateProfile(@AuthenticationPrincipal User user,
-                                @RequestParam String password,
-                                @RequestParam String phoneNumber){
+                                @RequestParam String password
+                                ){//,@RequestParam String phoneNumber
 
-        userService.updateProfile(user, password, phoneNumber);
+        userService.updateProfile(user, password);//, phoneNumber
         return "redirect:/user/profile";
     }
 }

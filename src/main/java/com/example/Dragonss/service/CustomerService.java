@@ -22,7 +22,7 @@ public class CustomerService {
         }
 
         customer.setNameCustomer(customer.getNameCustomer());
-        customer.setPhoneNumber(customer.getPhoneNumber());//t(Collections.singleton(Role.USER));
+        customer.setPhoneNumber(customer.getPhoneNumber());
         customerRepo.save(customer);
 
         return customer;

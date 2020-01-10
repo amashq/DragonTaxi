@@ -5,20 +5,20 @@ import com.example.Dragonss.domain.Dragon;
 import com.example.Dragonss.repos.DragonRepo;
 import com.example.Dragonss.service.DragonService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-@Controller
+
+@RestController
+@RequestMapping
+@CrossOrigin
 //@RequestMapping("/main")
 //@PreAuthorize("hasAnyAuthority('MANAGER', 'ADMIN')")
 public class DragonController {
@@ -28,16 +28,60 @@ public class DragonController {
     @Autowired
     DragonService dragonService;
 
-    @GetMapping("/main")
-//    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
-    //Map<String, Object>
-    public String main(Model model) {
-
-        //Iterable<Dragon> dragons = dragonRepo.findAll();//Туда где список драконов одного класса
-        //model.addAttribute("dragons", dragonRepo.findAll());
-        model.addAttribute("clD", ClDragon.values());
-        return "main";
+    @GetMapping("/getNamesDragon/{classD}")
+    @ResponseBody
+    public Iterable<Dragon> getDragon(@PathVariable("classD") ClDragon classDragon){
+        return dragonService.getDragons(classDragon);
     }
+
+    static class CountDragons{
+        public ClDragon classDragon;
+        public Long countDragons;
+    }
+
+    @GetMapping("/listDragons")
+    public Iterable<CountDragons> listDragons() {
+        List<Object[]> result = dragonService.getCountDragons();
+        List<CountDragons> listD = new LinkedList<>();
+
+        for (Object[] object : result) {
+            CountDragons countDragons = new CountDragons();
+            countDragons.classDragon = (ClDragon) object[0];
+            countDragons.countDragons = ((Long)object[1]);
+            listD.add(countDragons);
+        }
+        return listD;
+    }
+
+    @GetMapping("/listDragons/{classDragon}")
+    public Iterable<Dragon> listOfClassDragons(@PathVariable ClDragon classDragon) {
+        return dragonService.getNamesDragons(classDragon);
+    }
+
+    @PostMapping("/deleteDragon")
+    @ResponseBody
+    public ResponseEntity<?> delDragon(@RequestBody Dragon dragon){
+        dragonService.deleteDragon(dragon.getId());
+        return new ResponseEntity<String>("Дракон удален", HttpStatus.OK);
+    }
+
+    @GetMapping("/dragon/{id}")
+    public Dragon getOrder( @PathVariable("id") Integer id){
+        return dragonService.findDragon(id);
+    }
+
+
+
+
+
+
+
+
+
+
+
+//    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
+
 
 
     static class QueryCountDragon{
@@ -47,33 +91,6 @@ public class DragonController {
         public Long countPatientDragon;
     }
 
-    @GetMapping("/listDragons")
-//    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
-    //Map<String, Object>
-    public String listDragons(Model model) {
-        List<Object[]> result = dragonRepo.findDragonCount();
-        Boolean req = true;
-        Map<ClDragon, Long> map = null;
-        if(result != null && !result.isEmpty()){
-            map = new HashMap<ClDragon, Long>();
-            for (Object[] object : result) {
-                map.put((ClDragon) object[0],((Long)object[1]));
-            }
-        }
-  //      Iterable<Object[]> d = dragonRepo.findDragonCount();
-        model.addAttribute("countDragon", map);
-        return "listDragons";
-    }
-
-
-
-    @PostMapping("/getNamesDragon")
-    @ResponseBody
-    public List<Dragon> getDragon(@RequestBody Dragon dragon){
-        List<Dragon> dragonn = dragonRepo.findByClassDragonAndBusyAndPatient(
-                dragon.getClassDragon(), false, false);
-        return dragonn;
-    }
 
     @PostMapping("/listDragons")
     public String showListDragons(Model model) {
@@ -134,9 +151,4 @@ public class DragonController {
             return "redirect:/main";///изменить????????
 }
 
-
-    public String firstUpperCase(String word){
-        if(word == null || word.isEmpty()) return "";//или return word;
-        return word.substring(0, 1).toUpperCase() + word.substring(1);
-    }
 }

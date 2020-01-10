@@ -63,20 +63,11 @@ public class UserService implements UserDetailsService {
                 user.getRoles().add(Role.valueOf(key));
             }
         }
-
         userRepo.save(user);
     }
 
-    public void updateProfile(User user, String password, String phoneNumber) {
-        String userphoneNumber = user.getPhoneNumber();
+    public void updateProfile(User user, String password) {
         String userPassword = user.getPassword();
-
-        boolean isPhoneNumberChanged = (phoneNumber != null && !phoneNumber.equals(userphoneNumber)) ||
-                (userphoneNumber != null && !userphoneNumber.equals(phoneNumber));
-
-        if (isPhoneNumberChanged) {
-            user.setPhoneNumber(phoneNumber);
-        }
 
         boolean isPasswordChanged = (password != null && !password.equals(userPassword)) ||
                 (userPassword != null && !userPassword.equals(password));

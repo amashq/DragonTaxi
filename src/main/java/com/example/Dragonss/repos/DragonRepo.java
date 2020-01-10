@@ -10,13 +10,14 @@ import java.util.List;
 //JpaRepository<Dragon, Integer>
 
 public interface DragonRepo extends CrudRepository<Dragon, Integer> {
-//    Dragon findDragonBy(String name);
 //    List<Dragon> findAllById();
+//    Dragon findDragonByName
     Dragon findByName(String name);
     Dragon findDragonById(Integer id);
 
     List<Dragon> findByClassDragon(ClDragon classDragon);
-    List<Dragon> findByClassDragonAndBusyAndPatient(ClDragon classDragon, boolean busy, boolean patient);
+
+    Iterable<Dragon> findAllByClassDragonAndBusyAndPatient(ClDragon classDragon, boolean busy, boolean patient);
 
 @Query("select d.classDragon, COALESCE(count(d),0) as cnt from Dragon d GROUP BY d.classDragon")
     public List<Object[]> findDragonCount( );//Param("valBusy") Boolean busy, Param("patient") Boolean patient

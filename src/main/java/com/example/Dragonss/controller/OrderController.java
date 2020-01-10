@@ -1,83 +1,73 @@
 package com.example.Dragonss.controller;
 
-//import com.example.Dragonss.domain.Orrder;
 import com.example.Dragonss.domain.*;
 import com.example.Dragonss.service.CustomerService;
+import com.example.Dragonss.service.DragonService;
 import com.example.Dragonss.service.OrderService;
 import com.example.Dragonss.service.RoutesService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import com.example.Dragonss.repos.OrderRepo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.Map;
 
-@Controller
+@RestController
+@RequestMapping
+@CrossOrigin
 //@PreAuthorize("hasAuthority('USER')")
 public class OrderController {
 
+    private static final Logger logger = LogManager.getLogger(OrderController.class);
+
     @Autowired
     private OrderRepo orderRepo;
-
     @Autowired
-    private RoutesService routesService;
-
+    private DragonService dragonService;
     @Autowired
     private CustomerService customerService;
-
     @Autowired
     private OrderService orderService;
 
 
-    @GetMapping("/order")
-    public String order(Model model) {
-//        Iterable<Orrder> orders = orderRepo.findAll();
-//        model.put("orders", orders);
-
-        model.addAttribute("clD", ClDragon.values());
-        return "order";
-    }
-
-    @GetMapping("/listOrders")
-    public String order(Map<String, Object> model) {
-        Iterable<Orrder> orders = orderRepo.findAll();
-        model.put("orders", orders);
-        return "listOrders";
-    }
-
-    static class OrrderAndCustomer{
+    static class OrderAndCustomer{
         public Orrder order;
         public Customer customer;
     }
 
-    @PostMapping("/listOrders")   //Map<Orrder, Object> json
-    public void editOrder(@RequestBody OrrderAndCustomer json){
+    @GetMapping("/listOrders")
+    public Iterable<Orrder> getAllOrders() { return orderService.findAll(); }
+
+    @GetMapping("/order/{id}")
+    public Orrder getOrder( @PathVariable("id") Integer id){
+        return orderService.findOrder(id);
+    }
+
+    @PostMapping("/updateOrder")
+    public ResponseEntity<?> editOrder(@RequestBody OrderAndCustomer json){
         json.customer  = customerService.addCustomer(json.customer);
         json.order.setCustomer(json.customer);
+        dragonService.setBusyDragon(json.order.getDragon());
         orderService.updateOrder(json.order);
-
-        Iterable<Orrder> orders = orderRepo.findAll();
+        return new ResponseEntity<OrderAndCustomer>(json, HttpStatus.OK);
     }
 
-    @PostMapping("/saveOrder")
-    @ResponseBody
-    public void addOrder(@RequestBody  OrrderAndCustomer json){
-        json.customer  = customerService.addCustomer(json.customer);
-        json.order.setCustomer(json.customer);
-        json.order.setStatus("Получен");
-        json.order.setDragon("Не назначен");
-        json.order.setSum("Не назначена");
-        orderRepo.save(json.order);
-    }
 
-    @PostMapping("/listOrders/del")
-    @ResponseBody
-    public void delOrder(@RequestBody Orrder order){
-        orderRepo.deleteById(order.getId());
-   }
+    @PostMapping("/deleteOrder")
+    public ResponseEntity<?> delOrder(@RequestBody Orrder order){
+        orderService.deleteOrder(order.getId());
+        return new ResponseEntity<String>("Заказ удален", HttpStatus.OK);
+
+//        else { return ResponseEntity.notFound().build();}
+    }
 //
 //    @PostMapping("/order/from")
 //    @ResponseBody
@@ -87,33 +77,29 @@ public class OrderController {
 //    }
 
     @PostMapping("/order")
-    public String addOrder (
-           @Valid Orrder order,
-            BindingResult bindingResult,
-            Model model) {
+    public ResponseEntity<?> addOrder (
+            @Valid @RequestBody OrderAndCustomer json,
+            BindingResult bindingResult) {
 
         if(bindingResult.hasErrors()) {
-           Map<String,String> errorsMap = ControllerUtils.getErrors(bindingResult);
-           model.mergeAttributes(errorsMap);
-           model.addAttribute("order", order);
+            Map<String, String> errorMap = new HashMap<>();
 
-        } else {
+            for(FieldError error: bindingResult.getFieldErrors()){
+                errorMap.put(error.getField(), error.getDefaultMessage());
+            }
+            return new ResponseEntity<Map<String, String>>(errorMap, HttpStatus.BAD_REQUEST);
 
-                Customer customer = customerService.addCustomer(order.getCustomer());
+        }
+        json.customer = customerService.addCustomer(json.customer);
 
-                order.setCustomer(customer);
-                order.setStatus("Получен");
-                order.setDragon("Не назначен");
-                order.setSum("Не назначена");
-                model.addAttribute("order", order);
+        json.order.setCustomer(json.customer);
+        json.order.setStatus("Получен");
+        json.order.setDragon("Не назначен");
+        json.order.setSum("Не назначена");
 
-//            model.addAttribute("order", null);
-                orderRepo.save(order);
-    }
+        logger.debug("Добавлен заказ - order: {}", () -> json.order);
+        Orrder ord = orderRepo.save(json.order);
 
-//        Iterable<Orrder> orders = orderRepo.findAll();
-//        model.addAttribute("orders", orders);
-        model.addAttribute("clD", ClDragon.values());//redirect:/
-        return "order";
+        return new ResponseEntity<Orrder>(ord, HttpStatus.CREATED);
     }
 }
