@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import Carousell from '../Carousell';
+import Carousell from './Carousell';
 import DatePicker from 'react-datepicker';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from "yup";
@@ -7,6 +7,7 @@ import * as Yup from "yup";
 import 'react-datepicker/dist/react-datepicker.css';
 import OrderDataService from "../../service/OrderDataService";
 import ModalWindow from "../ModalWindow";
+import RouteDataService from "../../service/RouteDataService";
 
 
 const ValidationSchema = Yup.object().shape({
@@ -27,19 +28,37 @@ const ValidationSchema = Yup.object().shape({
 
 class AddOrder extends Component {
 
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            startAddress: [],
+            start: '',
+            destAddress: [],
+            dest: ''
+        };
+
+        this.handleChangeStart = this.handleChangeStart.bind(this);
+    }
+
+    componentDidMount() {
+        RouteDataService.getStartAddresses().then(
+        response => {
+            console.log(response.data);
+            this.setState({ startAddress: response.data });
+        } )
+    }
 
     handleChangeDate = date => {
         return  date.getDate() + "/" + (((date.getMonth() + 1) < 10) ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1))
             + "/" + date.getFullYear() + " " + date.getHours() + ":" + ((date.getMinutes() === 0) ? (date.getMinutes() + '0') : date.getMinutes());
-
     };
 
     state = {
         isOpen: false,
     };
 
-    openModal
-        = () => {
+    openModal = () => {
         this.setState({isOpen: true});
     };
 
@@ -51,7 +70,19 @@ class AddOrder extends Component {
         this.setState({isOpen: false});
     };
 
+    handleChangeStart(val) {
+        console.log(val);
+        RouteDataService.getDestAddresses(val).then(
+            response => {
+                console.log(response.data);
+                this.setState({ destAddress: response.data });
+                return response.data;
+            } )
+    }
+
     render() {
+
+        let addresses = this.state.startAddress;
 
         return (
             <div>
@@ -63,12 +94,11 @@ class AddOrder extends Component {
                         destAddress: '',
                         timeTravel: new Date(),
                         classD: '',
+                        dest: this.state.destAddress,
                     }}
 
                     validationSchema={ValidationSchema}
-                    onSubmit={(
-                        // this.handleSubmit
-                        values, props) => {
+                    onSubmit={(values) => {
                         const newOrder = {
                             startAddress: values.startAddress,
                             destAddress: values.destAddress,
@@ -91,10 +121,9 @@ class AddOrder extends Component {
                     }
                     }
                 >
-                    {({values, errors, status, touched,  setFieldValue}) => (
+                    {({values, errors, touched,  setFieldValue, handleChange, form}) => (
                     <Form>
                         <div className="container">
-
 
                                 <div className="input-group" id="inputGroupSelectName">
                                     <label className="col-2 col-form-label">Имя</label>
@@ -114,37 +143,77 @@ class AddOrder extends Component {
                                     <ErrorMessage name="phoneNumber" component="div" className="invalid-feedback indent"/>
                                 </div>
 
-                                    <div className="input-group">
-                                        <label className="col-2 col-form-label">Откуда</label>
-                                        <Field as="select" className={"custom-select" + (errors.startAddress && touched.startAddress ? ' is-invalid' : '')}
-                                               id="inputGroupSelectFrom"
-                                                name="startAddress"  >
-                                            <option  defaultValue  > </option>
-                                            <option value="Амбар">Амбар</option>
-                                            <option value="Главный амбар">Главный амбар</option>
-                                            <option value="Визжащие леса">Визжащие леса</option>
-                                            <option value="Песня смерти">Песня смерти</option>
-                                            <option value="Потерянная бездна">Потерянная бездна</option>
-                                            <option value="Мельница">Мельница</option>
-                                        </Field>
-                                        <ErrorMessage name="startAddress" component="div" className="invalid-feedback indent"/>
+                            <div className="input-group">
+                                <label  className="col-2 col-form-label" htmlFor="inputStart">Откуда</label>
+                                <Field as="select" className={"custom-select" + (errors.startAddress && touched.startAddress ? ' is-invalid' : '')}
+                                       id="inputStart" name="startAddress"
+                                       value={values.startAddress}
+                                       // setFieldValue = {"destAddress" this.handleChangeStart(val)}
+                                    // handleChange={handleChange}
+                                       onChange={val => {
+                                           console.log(val);
+                                           console.log(val.target.value);
+                                           setFieldValue("startAddress", val.target.value);
+                                           let destr = this.handleChangeStart(val.target.value);
+                                           console.log(destr);
+                                           console.log(values.dest);
+                                           console.log(values.destAddress);
+                                           console.log(this.state.dest);
+                                           console.log(this.state.destAddress);
+                                       }}
+                                       // render={({ field, form }) => (
+                                       //     <input
+                                       //         {...field}
+                                       //         onChange={e => {
+                                       //             console.log(e);
+                                       //             const domain = e.target.value;
+                                       //             console.log(domain);
+                                       //             handleChange(e);
+                                       //             form.setFieldValue('destAddress.domain', domain)
+                                       //         }}
+                                       //     />
+                                       // )}
+                                >
+                                    <option  key={0} value={''}></option>
+                                    {
+                                        addresses.map((startAddress) =>
+                                            <option  key={startAddress} value={startAddress}>{startAddress}</option>
+                                        )
+                                    }
+                                </Field>
+                                <ErrorMessage name="startAddress" component="div" className="invalid-feedback indent"/>
+                            </div>
 
-                                    </div>
-                                    <div className="input-group">
-                                        <label className="col-2 col-form-label">Куда</label>
-                                        <Field as="select" className={"custom-select" + (errors.destAddress && touched.destAddress ? ' is-invalid' : '')}
-                                                id="inputGroupSelectWhere"
-                                                name="destAddress" >
-                                            <option defaultValue > </option>
-                                            <option value="Главный амбар">Главный амбар</option>
-                                            <option value="Амбар">Амбар</option>
-                                            <option value="Песня смерти">Песня смерти</option>
-                                            <option value="Потерянная бездна">Потерянная бездна</option>
-                                            <option value="Визжащие леса">Визжащие леса</option>
-                                            <option value="Озеро Ларсона">Озеро Ларсона</option>
-                                        </Field>
-                                        <ErrorMessage name="destAddress" component="div" className="invalid-feedback indent"/>
-                                    </div>
+                            <div className="input-group">
+                                <label  className="col-2 col-form-label" htmlFor="inputDest">Куда</label>
+                                <Field as="select" className={"custom-select" + (errors.destAddress && touched.destAddress ? ' is-invalid' : '')}
+                                       id="inputDest" name="destAddress"
+                                       value={values.destAddress} >
+                                    <option  key={0} value={''}></option>
+                                    {
+                                        values.dest.map((destAddress) =>
+                                            <option  key={destAddress} value={destAddress}>{destAddress}</option>
+                                        )
+                                    }
+                                </Field>
+                                <ErrorMessage name="destAddress" component="div" className="invalid-feedback indent"/>
+                            </div>
+
+                                    {/*<div className="input-group">*/}
+                                    {/*    <label className="col-2 col-form-label">Куда</label>*/}
+                                    {/*    <Field as="select" className={"custom-select" + (errors.destAddress && touched.destAddress ? ' is-invalid' : '')}*/}
+                                    {/*            id="inputGroupSelectWhere"*/}
+                                    {/*            name="destAddress" >*/}
+                                    {/*        <option defaultValue > </option>*/}
+                                    {/*        <option value="Главный амбар">Главный амбар</option>*/}
+                                    {/*        <option value="Амбар">Амбар</option>*/}
+                                    {/*        <option value="Песня смерти">Песня смерти</option>*/}
+                                    {/*        <option value="Потерянная бездна">Потерянная бездна</option>*/}
+                                    {/*        <option value="Визжащие леса">Визжащие леса</option>*/}
+                                    {/*        <option value="Озеро Ларсона">Озеро Ларсона</option>*/}
+                                    {/*    </Field>*/}
+                                    {/*    <ErrorMessage name="destAddress" component="div" className="invalid-feedback indent"/>*/}
+                                    {/*</div>*/}
 
 
                                     <div className='input-group date' >
@@ -176,7 +245,6 @@ class AddOrder extends Component {
                                         </Field>
                                         <ErrorMessage name="classD" component="div" className="invalid-feedback indent"/>
                                     </div>
-                            {/*    </div>*/}
 
                                 <div>
                                     <Carousell />
@@ -205,11 +273,8 @@ class AddOrder extends Component {
                         Менеджер свяжется с вами в ближайшее время.</p>
                 </ModalWindow>
             </div>
-
-
         );
     }
 }
-
 
 export default AddOrder;
