@@ -26,11 +26,11 @@ public class MvcConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedMethods("PUT", "DELETE", "POST", "GET", "OPTIONS");
+                .allowedMethods("HEAD", "PUT", "DELETE", "POST", "GET", "OPTIONS");
     }
 
-    public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/login").setViewName("login");
-    }
+//    public void addViewControllers(ViewControllerRegistry registry) {
+//        registry.addViewController("/login").setViewName("login");
+//    }
 
 }
