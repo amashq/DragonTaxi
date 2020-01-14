@@ -1,12 +1,25 @@
 package com.example.Dragonss.domain;
 
-import org.springframework.security.core.GrantedAuthority;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.NaturalId;
 
-public enum Role implements GrantedAuthority {
-    USER, ADMIN, MANAGER, DRAGONOLOG;
+import javax.persistence.*;
 
-    @Override
-    public String getAuthority() {
-        return name();
-    }
+@Entity
+@Data
+@Table(name = "roles")
+@NoArgsConstructor
+public class Role {
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Long id;
+
+        @Enumerated(EnumType.STRING)
+        private RoleName name;
+
+
+        public Role(RoleName name) {
+            this.name = name;
+        }
 }

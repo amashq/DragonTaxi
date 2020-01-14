@@ -1,13 +1,15 @@
 package com.example.Dragonss.controller;
 
-import com.example.Dragonss.exception.AppException;
 import com.example.Dragonss.domain.Role;
+import com.example.Dragonss.exception.AppException;
+import com.example.Dragonss.domain.RoleName;
 //import com.example.Dragonss.domain.RoleName;
 import com.example.Dragonss.domain.User;
 import com.example.Dragonss.payload.ApiResponse;
 import com.example.Dragonss.payload.JwtAuthenticationResponse;
 import com.example.Dragonss.payload.LoginRequest;
 //import com.example.Dragonss.repos.RoleRepository;
+import com.example.Dragonss.payload.SignUpRequest;
 import com.example.Dragonss.repos.UserRepo;
 import com.example.Dragonss.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +22,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -36,10 +37,10 @@ public class AuthController {
     AuthenticationManager authenticationManager;
 
     @Autowired
-    UserRepo userRepository;
+    UserRepo userRepo;
 
-//    @Autowired
-//    RoleRepository roleRepository;
+    @Autowired
+    RoleRepository roleRepo;
 
     @Autowired
     PasswordEncoder passwordEncoder;
@@ -63,35 +64,29 @@ public class AuthController {
         return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
     }
 
-//    @PostMapping("/signup")
-//    public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
-//        if(userRepository.existsByUsername(signUpRequest.getUsername())) {
-//            return new ResponseEntity(new ApiResponse(false, "Username is already taken!"),
-//                    HttpStatus.BAD_REQUEST);
-//        }
-//
-//        if(userRepository.existsByEmail(signUpRequest.getEmail())) {
-//            return new ResponseEntity(new ApiResponse(false, "Email Address already in use!"),
-//                    HttpStatus.BAD_REQUEST);
-//        }
-//
-//        // Creating user's account
-//        User user = new User(signUpRequest.getName(), signUpRequest.getUsername(),
-//                signUpRequest.getEmail(), signUpRequest.getPassword());
-//
-//        user.setPassword(passwordEncoder.encode(user.getPassword()));
-//
-//        Role userRole = roleRepository.findByName(RoleName.ROLE_USER)
-//                .orElseThrow(() -> new AppException("User Role not set."));
-//
-//        user.setRoles(Collections.singleton(userRole));
-//
-//        User result = userRepository.save(user);
-//
-//        URI location = ServletUriComponentsBuilder
-//                .fromCurrentContextPath().path("/api/users/{username}")
-//                .buildAndExpand(result.getUsername()).toUri();
-//
-//        return ResponseEntity.created(location).body(new ApiResponse(true, "User registered successfully"));
-//    }
+    @PostMapping("/signup")
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
+        if(userRepo.existsByUsername(signUpRequest.getUsername())) {
+            return new ResponseEntity(new ApiResponse(false, "Username is already taken!"),
+                    HttpStatus.BAD_REQUEST);
+        }
+
+        // Creating user's account
+        User user = new User(signUpRequest.getUsername(), signUpRequest.getPassword());
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        Role userRole = roleRepo.findByName()
+                .orElseThrow(() -> new AppException("User Role not set."));
+
+        user.setRoles(Collections.singleton(userRole));
+
+        User result = userRepo.save(user);
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentContextPath().path("/")
+                .buildAndExpand(result.getUsername()).toUri();
+
+        return ResponseEntity.created(location).body(new ApiResponse(true, "User registered successfully"));
+    }
 }
