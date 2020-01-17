@@ -27,17 +27,11 @@ public class User  {
 //    @Transient
 //    @NotBlank(message = "Повторный пароль не может быть пустым")
 //    private String password2;
-//    private boolean active;
+    private boolean active;
 
-//    @ElementCollection(targetClass = RoleName.class, fetch = FetchType.EAGER )
-//    @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
-//    @Enumerated(EnumType.STRING)
-//    private Set<RoleName> roles = new HashSet<>();
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER )
+    @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
+    @Enumerated(EnumType.STRING)
     private Set<Role> roles = new HashSet<>();
 
     public User(String username, String password) {
@@ -45,46 +39,21 @@ public class User  {
         this.password = password;
     }
 
-//    public boolean isAdmin(){
-//        return roles.contains(RoleName.ADMIN);
-//    }
-//
-//    public boolean isManager(){
-//        return roles.contains(RoleName.MANAGER);
-//    }
-//
-//    public boolean isDraconolog(){
-//        return roles.contains(RoleName.DRAGONOLOG);
-//    }
-//
-//    public boolean isCashier(){
-//        return roles.contains(RoleName.CASHIER);
-//    }
-//
-//    public boolean isDriverr(){ return roles.contains(RoleName.DRIVER); }
+    public boolean isAdmin(){
+        return roles.contains(Role.ADMIN);
+    }
 
-//    @Override
-//    public boolean isAccountNonExpired() {
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean isAccountNonLocked() {
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean isCredentialsNonExpired() {
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean isEnabled() {
-//        return isActive();
-//    }
-//
-//    @Override
-//    public Collection<? extends GrantedAuthority> getAuthorities() {
-//        return getRoles();
-//    }
+    public boolean isManager(){
+        return roles.contains(Role.MANAGER);
+    }
+
+    public boolean isDraconolog(){
+        return roles.contains(Role.DRAGONOLOG);
+    }
+
+    public boolean isCashier(){
+        return roles.contains(Role.CASHIER);
+    }
+
+    public boolean isDriverr(){ return roles.contains(Role.DRIVER); }
 }

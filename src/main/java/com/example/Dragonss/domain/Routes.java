@@ -12,7 +12,6 @@ import javax.persistence.Id;
 @Entity
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class Routes {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
@@ -20,4 +19,10 @@ public class Routes {
     private String pointOfDeparture;
     private String pointOfArrival;
     private Integer cost;
+
+    public Routes(String pointOfDeparture, String pointOfArrival, Integer cost) {
+        this.pointOfDeparture = pointOfDeparture;
+        this.pointOfArrival = pointOfArrival;
+        this.cost = cost;
+    }
 }

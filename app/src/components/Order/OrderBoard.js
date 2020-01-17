@@ -3,9 +3,9 @@ import OrderDataService  from "../../service/OrderDataService";
 import {BootstrapTable, InsertButton, TableHeaderColumn} from "react-bootstrap-table";
 import ModalWindow from "../ModalWindow";
 import EditOrder from "./EditOrder";
-
-// import {connect} from "react-redux";
-// import { GET_ORDERS } from "../../actions/types";
+import NotFound from "../../common/NotFound";
+import ServerError from "../../common/ServerError";
+import DriverDataService from "../../service/DriverDataService";
 
 class OrderBoard extends Component {
 
@@ -15,13 +15,16 @@ class OrderBoard extends Component {
             orders: [],
             order: [],
             dragons: [],
-            startAddress: '',
-            message: null
+            drivers: [],
+            message: null,
+            notFound: '',
+            serverError: ''
         };
         this.deleteRowOrder = this.deleteRowOrder.bind(this);
         this.refreshOrders = this.refreshOrders.bind(this);
         this.updateOrder = this.updateOrder.bind(this);
         this.getOrderForUpdateOrder = this.getOrderForUpdateOrder.bind(this);
+        this.getDrivers = this.getDrivers.bind(this);
         this.addOrder = this.addOrder.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
@@ -31,14 +34,32 @@ class OrderBoard extends Component {
         this.refreshOrders();
     }
 
-
     updateOrder(id, classD) {
         OrderDataService.getDragons(classD).then(
             response => {
                 this.setState({ dragons: response.data });
+               this.getDrivers();
                 this.getOrderForUpdateOrder(id);
+            }).catch(error => {
+            if(error.status === 500) {
+                this.setState({ serverError: true })
+            } else {
+                this.setState({ notFound: true });
             }
-        );
+        });
+    }
+
+    getDrivers(){
+        DriverDataService.getFreeDriver().then(
+            response => {
+                this.setState({ drivers: response.data });
+            }).catch(error => {
+            if(error.status === 500) {
+                this.setState({ serverError: true })
+            } else {
+                this.setState({ notFound: true });
+            }
+        });
 
     }
 
@@ -47,8 +68,13 @@ class OrderBoard extends Component {
             response => {
                 this.setState({ order: response.data });
                 this.openEditModal();
+            }).catch(error => {
+            if(error.status === 500) {
+                this.setState({ serverError: true })
+            } else {
+                this.setState({ notFound: true });
             }
-        );
+        });
     }
 
 
@@ -58,21 +84,29 @@ class OrderBoard extends Component {
 
     refreshOrders() {
         OrderDataService.getAllOrders()
-            .then(
-                response => {
+            .then(response => {
                     this.setState({ orders: response.data })
-                }
-            );
+                }).catch(error => {
+            if(error.status === 500) {
+                this.setState({ serverError: true })
+            } else {
+                this.setState({ notFound: true });
+            }
+        });
     }
 
     deleteRowOrder(row) {
         OrderDataService.deleteOrder(row)
-            .then(
-                response => {
+            .then(response => {
                     this.setState({ message: `Заказ удален успешно` });
                     this.refreshOrders()
-                }
-            )
+                }).catch(error => {
+            if(error.status === 500) {
+                this.setState({ serverError: true })
+            } else {
+                this.setState({ notFound: true });
+            }
+        });
     }
 
     state = {
@@ -85,6 +119,7 @@ class OrderBoard extends Component {
         this.setState({ title: 'Редактирование заказа' });
         this.setState({ children: <EditOrder order={this.state.order}
                                              dragons={this.state.dragons}
+                                             drivers={this.state.drivers}
                                              handleCancel={this.handleCancel}
                                              handleSubmit={this.handleSubmit}/> });
         this.setState({ isOpen: true });
@@ -100,7 +135,13 @@ class OrderBoard extends Component {
                 this.refreshOrders();
                 this.setState({ isOpen: false });
             }
-        );
+        ).catch(error => {
+            if(error.status === 500) {
+                this.setState({ serverError: true })
+            } else {
+                this.setState({ notFound: true });
+            }
+        });
     };
 
     handleCancel = () => {
@@ -110,30 +151,20 @@ class OrderBoard extends Component {
 
     operateFormatter(cell, row) {
         return (
-            <div>
-                <a className="lan-edit"
-                   onClick={() => this.updateOrder(row.id, row.classD) }
-                   title="Edit">
+            <div align="center">
+                <a className="lan-edit" title="Edit"
+                   onClick={() => this.updateOrder(row.id, row.classD) }>
+
                     <i className="fas fa-pen ui" style={{"marginRight":"5px"}}></i>
                 </a>
-                <a className="lan-remove"
-                   onClick={() => this.deleteRowOrder(row) }
-                    // href=" "
-                   title="Remove">
+                <a className="lan-remove" title="Remove"
+                   onClick={() => this.deleteRowOrder(row) }>
                     <i className="fa fa-trash ui"></i>
                 </a>
             </div>);
     }
 
     render() {
-        const options = {
-        //     afterInsertRow: this.onAfterInsertRow,   // A hook for after insert rows
-        //     insertBtn: this.createCustomInsertButton,
-        //     addModal: this.createAddModal,
-        //     deleteRowOrder: this.props.deleteRowOrder
-           deleteRowOrder: this.deleteRowOrder.bind(this)
-        };
-
 
         function showNameCustomer(cell, row) {
             return cell.nameCustomer;
@@ -141,6 +172,14 @@ class OrderBoard extends Component {
 
         function showPhoneNumber(cell, row) {
             return cell.phoneNumber;
+        }
+
+        function showNameDriver(cell, row) {
+            console.log(cell);
+            if (cell===null){
+                return null;
+            } else {
+            return cell.nameDriver; }
         }
 
         function sortByPhoneNumber(a, b, order, field) {
@@ -166,6 +205,14 @@ class OrderBoard extends Component {
         }
 
 
+        if(this.state.notFound) {
+            return <NotFound />;
+        }
+
+        if(this.state.serverError) {
+            return <ServerError />;
+        }
+
         return (
             <div  className="container mt-2 mb-2">
 
@@ -180,14 +227,14 @@ class OrderBoard extends Component {
                                 pagination search>
                     <TableHeaderColumn  dataField="id" dataSort={ true }
                                         headerAlign='center' dataAlign='center'
-                                        isKey hidden searchable={ false }>ID</TableHeaderColumn>
+                                        isKey  searchable={ true }>№</TableHeaderColumn>
                     <TableHeaderColumn dataField="status" dataSort={ true }
                                        headerAlign='center' dataAlign='center'>Статус</TableHeaderColumn>
                     <TableHeaderColumn dataField="customer"
                                        dataFormat={showNameCustomer} dataSort={ true }
-                                       headerAlign='center' dataAlign='center'
+                                       headerAlign='center' dataAlign='center' hidden
                                        sortFunc = {sortByNameCustomer}>Клиент</TableHeaderColumn>
-                    <TableHeaderColumn dataField="customer"
+                    <TableHeaderColumn dataField="customer" hidden
                                        dataFormat={showPhoneNumber} dataSort
                                        headerAlign='center' dataAlign='center'
                                        sortFunc={ sortByPhoneNumber }>Телефон</TableHeaderColumn>
@@ -197,15 +244,16 @@ class OrderBoard extends Component {
                                        headerAlign='center' dataAlign='center'>Откуда</TableHeaderColumn>
                     <TableHeaderColumn dataField="destAddress" dataSort={ true }
                                        headerAlign='center' dataAlign='center'>Куда</TableHeaderColumn>
-                    <TableHeaderColumn  dataField="classD" dataSort={ true }
+                    <TableHeaderColumn  dataField="classD" dataSort={ true } hidden
                                         headerAlign='center' dataAlign='center'>Класс дракона</TableHeaderColumn>
                     <TableHeaderColumn dataField="dragon" dataSort={ true }
                                        headerAlign='center' dataAlign='center'>Дракон</TableHeaderColumn>
+                    <TableHeaderColumn dataField="driver" dataFormat={showNameDriver} dataSort={ true }
+                                       headerAlign='center' dataAlign='center' >Водитель</TableHeaderColumn>
                     <TableHeaderColumn dataField="sum" dataSort={ true }
                                        headerAlign='center' dataAlign='center'>Итого</TableHeaderColumn>
                     <TableHeaderColumn dataFormat={(cell, row) => this.operateFormatter(cell, row)}
                                        headerAlign='center' data-align="center" >Действия</TableHeaderColumn >
-
                 </BootstrapTable>
 
 
@@ -221,13 +269,5 @@ class OrderBoard extends Component {
         );
     }
 }
-
-// OrderBoard.propTypes = {
-//     getAllOrders: PropTypes.func.isRequired
-//     // ,
-//     // deleteOrder: PropTypes.func.isRequired
-// };
-
-
 
 export default OrderBoard;

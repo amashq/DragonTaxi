@@ -1,37 +1,58 @@
 import axios from "axios";
+import {ACCESS_TOKEN} from "../constants/constants";
 
 const BASE_URL = 'http://localhost:8080';
 
 class DragonDataService {
 
     getCountDragons() {
-        return axios.get(BASE_URL + '/listDragons');
+        return axios.get(BASE_URL + '/listDragons', {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem(ACCESS_TOKEN)
+            }
+        });
     };
 
     getNamesDragons(classDragon) {
-        return axios.get(BASE_URL + `/listDragons/${classDragon}`);
+        return axios.get(BASE_URL + `/listDragons/${classDragon}`, {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem(ACCESS_TOKEN)
+            }
+        });
     };
 
     getDragon(id) {
-        return axios.get(BASE_URL + `/dragon/${id}`)
+        return axios.get(BASE_URL + `/dragon/${id}`, {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem(ACCESS_TOKEN)
+            }
+        })
     };
 
     deleteDragon(dragon) {
 
         return axios.post(BASE_URL + "/deleteDragon", dragon, {
             headers: {
-                'Content-Type': 'application/json'
+                'Authorization': 'Bearer ' + localStorage.getItem(ACCESS_TOKEN)
             }
         });
     };
 
-    // async addOrder(orderAndCustomer) {
-    //     return await axios.post(BASE_URL + "/order", orderAndCustomer, {
-    //         headers: {
-    //             'Content-Type': 'application/json'
-    //         }
-    //     });
-    // };
+    updateDragon(dragon) {
+        return axios.post(BASE_URL + "/updateDragon", dragon, {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem(ACCESS_TOKEN)
+            }
+        });
+    };
+
+    addDragon(dragon) {
+        return axios.post(BASE_URL + "/addDragon", dragon, {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem(ACCESS_TOKEN)
+            }
+        });
+    };
 
 }
 

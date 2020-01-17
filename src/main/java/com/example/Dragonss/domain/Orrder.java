@@ -16,27 +16,29 @@ public class Orrder {
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
-    private Integer id;
-    @NotBlank(message = "Пожалуйста заполните данное поле")
+    private Long id;
+//    @OneToOne
+//    @JoinColumn (name="point_of_arrival")
+//    private Routes startAddress;
+//    @OneToOne
+//    @JoinColumn (name="point_of_departure")
+//    private Routes destAddress;
     private String startAddress;
     @NotBlank(message = "Пожалуйста заполните данное поле")
     private String destAddress;
     private String timeTravel;
-
-//    @ManyToOne(fetch = FetchType.EAGER)
-//    @JoinColumn(name = "classDragon_id")//устанавливаем название поля в БД
     private  String classD;
 
     private String status;
     private String dragon;
-    private String sum;
+    private Integer sum;
+
+    @ManyToOne
+    @JoinColumn (name="driver_id")
+    private Driver driver;
 
     @ManyToOne //(optional=false, cascade=CascadeType.ALL)
     @JoinColumn (name="customer_id")
     private Customer customer;
-
-//    @OneToMany //(optional=false, cascade=CascadeType.ALL)///////////////////////////////////
-//    @JoinColumn (name="dragon_id")
-//    private Dragon nameDragon;
 
 }

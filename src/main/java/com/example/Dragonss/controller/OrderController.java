@@ -1,16 +1,12 @@
 package com.example.Dragonss.controller;
 
 import com.example.Dragonss.domain.*;
-import com.example.Dragonss.service.CustomerService;
-import com.example.Dragonss.service.DragonService;
-import com.example.Dragonss.service.OrderService;
-import com.example.Dragonss.service.RoutesService;
+import com.example.Dragonss.service.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
-import com.example.Dragonss.repos.OrderRepo;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -23,58 +19,85 @@ import java.util.Map;
 @RestController
 @RequestMapping
 @CrossOrigin
-//@PreAuthorize("hasAuthority('USER')")
 public class OrderController {
 
     private static final Logger logger = LogManager.getLogger(OrderController.class);
 
-    @Autowired
-    private OrderRepo orderRepo;
     @Autowired
     private DragonService dragonService;
     @Autowired
     private CustomerService customerService;
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private RoutesService routesService;
+    @Autowired
+    private DriverService driverService;
 
 
     static class OrderAndCustomer{
         public Orrder order;
         public Customer customer;
+        public Driver driver;
     }
 
+    @PreAuthorize("hasAuthority('MANAGER')")
     @GetMapping("/listOrders")
     public Iterable<Orrder> getAllOrders() { return orderService.findAll(); }
 
+    @PreAuthorize("hasAnyAuthority('MANAGER', 'DRIVER')")
     @GetMapping("/order/{id}")
-    public Orrder getOrder( @PathVariable("id") Integer id){
+    public Orrder getOrder( @PathVariable("id") Long id){
         return orderService.findOrder(id);
     }
 
+    @PreAuthorize("hasAuthority('MANAGER')")
+    @GetMapping("/getNamesDragon/{classD}")
+    @ResponseBody
+    public Iterable<Dragon> getDragon(@PathVariable("classD") ClDragon classDragon){
+        return dragonService.getDragons(classDragon);
+    }
+
+    @PreAuthorize("hasAuthority('MANAGER')")
     @PostMapping("/updateOrder")
     public ResponseEntity<?> editOrder(@RequestBody OrderAndCustomer json){
         json.customer  = customerService.addCustomer(json.customer);
         json.order.setCustomer(json.customer);
-        dragonService.setBusyDragon(json.order.getDragon());
+
+        if (!json.order.getDragon().equals("Не назначен")) {
+        dragonService.setBusyDragon(json.order.getDragon()); }
+
+        json.driver = driverService.setDriver(json.driver);
+        driverService.setBusyDriver(json.driver.getNameDriver());
+
+        json.order.setDriver(json.driver);
         orderService.updateOrder(json.order);
         return new ResponseEntity<OrderAndCustomer>(json, HttpStatus.OK);
     }
 
-
+    @PreAuthorize("hasAuthority('MANAGER')")
     @PostMapping("/deleteOrder")
     public ResponseEntity<?> delOrder(@RequestBody Orrder order){
-        orderService.deleteOrder(order.getId());
+        if (!order.getDragon().equals("Не назначен")) {
+            dragonService.setNotBusyDragon(order.getDragon());
+        }
+        orderService.deleteOrder(order);
         return new ResponseEntity<String>("Заказ удален", HttpStatus.OK);
-
 //        else { return ResponseEntity.notFound().build();}
     }
-//
-//    @PostMapping("/order/from")
-//    @ResponseBody
-//    public List<String> fromRoute(){
-//        List<String> routesFrom = [dd,dd,dd];
-//        return routesFrom;
-//    }
+
+    @PreAuthorize("hasAuthority('DRIVER')")
+    @GetMapping("/listDriversOrders/{usernameDriver}")
+    public Iterable<Orrder>  getDriversOrders(@PathVariable String usernameDriver) {
+        Driver driver = driverService.getDriver(usernameDriver);
+        return orderService.findDriverOrder(driver);
+    }
+
+    @PreAuthorize("hasAuthority('DRIVER')")
+    @PostMapping("/updateStatus")
+    public void updateStatus(@RequestBody Orrder order) {
+        orderService.updateStatus(order);
+    }
 
     @PostMapping("/order")
     public ResponseEntity<?> addOrder (
@@ -95,10 +118,11 @@ public class OrderController {
         json.order.setCustomer(json.customer);
         json.order.setStatus("Получен");
         json.order.setDragon("Не назначен");
-        json.order.setSum("Не назначена");
+//        json.order.setDriver(null);
+        json.order.setSum(routesService.findCost(json.order.getStartAddress(), json.order.getDestAddress()));
 
         logger.debug("Добавлен заказ - order: {}", () -> json.order);
-        Orrder ord = orderRepo.save(json.order);
+        Orrder ord = orderService.saveOrder(json.order);
 
         return new ResponseEntity<Orrder>(ord, HttpStatus.CREATED);
     }

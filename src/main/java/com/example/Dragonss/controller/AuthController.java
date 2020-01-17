@@ -1,8 +1,7 @@
 package com.example.Dragonss.controller;
 
-import com.example.Dragonss.domain.Role;
 import com.example.Dragonss.exception.AppException;
-import com.example.Dragonss.domain.RoleName;
+import com.example.Dragonss.domain.Role;
 //import com.example.Dragonss.domain.RoleName;
 import com.example.Dragonss.domain.User;
 import com.example.Dragonss.payload.ApiResponse;
@@ -40,9 +39,6 @@ public class AuthController {
     UserRepo userRepo;
 
     @Autowired
-    RoleRepository roleRepo;
-
-    @Autowired
     PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -67,7 +63,7 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
         if(userRepo.existsByUsername(signUpRequest.getUsername())) {
-            return new ResponseEntity(new ApiResponse(false, "Username is already taken!"),
+            return new ResponseEntity<>(new ApiResponse(false, "Username is already taken!"),
                     HttpStatus.BAD_REQUEST);
         }
 
@@ -76,10 +72,7 @@ public class AuthController {
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        Role userRole = roleRepo.findByName()
-                .orElseThrow(() -> new AppException("User Role not set."));
-
-        user.setRoles(Collections.singleton(userRole));
+        user.setRoles(Collections.singleton(Role.USER));
 
         User result = userRepo.save(user);
 

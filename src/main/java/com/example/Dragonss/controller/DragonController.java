@@ -7,6 +7,7 @@ import com.example.Dragonss.service.DragonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -19,20 +20,11 @@ import java.util.*;
 @RestController
 @RequestMapping
 @CrossOrigin
-//@RequestMapping("/main")
-//@PreAuthorize("hasAnyAuthority('MANAGER', 'ADMIN')")
+@PreAuthorize("hasAnyAuthority('DRAGONOLOG')")
 public class DragonController {
-    @Autowired
-    private DragonRepo dragonRepo;
 
     @Autowired
     DragonService dragonService;
-
-    @GetMapping("/getNamesDragon/{classD}")
-    @ResponseBody
-    public Iterable<Dragon> getDragon(@PathVariable("classD") ClDragon classDragon){
-        return dragonService.getDragons(classDragon);
-    }
 
     static class CountDragons{
         public ClDragon classDragon;
@@ -61,94 +53,28 @@ public class DragonController {
     @PostMapping("/deleteDragon")
     @ResponseBody
     public ResponseEntity<?> delDragon(@RequestBody Dragon dragon){
-        dragonService.deleteDragon(dragon.getId());
+        dragonService.deleteDragon(dragon);
         return new ResponseEntity<String>("Дракон удален", HttpStatus.OK);
     }
 
     @GetMapping("/dragon/{id}")
-    public Dragon getOrder( @PathVariable("id") Integer id){
+    public Dragon getOrder( @PathVariable("id") Long id){
         return dragonService.findDragon(id);
     }
 
-
-
-
-
-
-
-
-
-
-
-//    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
-
-
-
-    static class QueryCountDragon{
-        public ClDragon clDragon;
-        public Long countDragon;
-        public Long countBusyDragon;
-        public Long countPatientDragon;
-    }
-
-
-    @PostMapping("/listDragons")
-    public String showListDragons(Model model) {
-        return "nameDragons";
-    }
-
-    @PostMapping("/nameDragons")
-    public String listOfClassDragons(Dragon dragon, Model model) {
-        List<Dragon> dragons = dragonRepo.findByClassDragon(dragon.getClassDragon());
-        model.addAttribute("dragons", dragons);
-        return "nameDragons";
-    }
-
-    @PostMapping("/dragon/del")
+    @PostMapping("/updateDragon")
     @ResponseBody
-    public void delOrder(@RequestBody Dragon dragon){
-        dragonRepo.deleteById(dragon.getId());
-    }
-
-
-    @PostMapping("/saveDragon")   //Map<Orrder, Object> json
-    @ResponseBody
-    public void editDragon(@RequestBody Dragon dragon) {
+    public ResponseEntity<?> editDragon(@RequestBody Dragon dragon) {
         dragonService.updateDragon(dragon);
+        return new ResponseEntity<Dragon>(dragon, HttpStatus.OK);
     }
 
-    //    @PostMapping("/main")
-////    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
-//    public String add(
-////            @AuthenticationPrincipal User user,
-//            @RequestParam String name, Boolean busy, @RequestParam Set<ClDragon> classDragon,
-//            Model model){
-//         busy = false;
-//         Dragon dragon = new Dragon(name, busy, classDragon);
-//         dragonRepo.save(dragon);
-//        Iterable<Dragon> dragons = dragonRepo.findAll();
-//
-//        model.addAttribute("dragons", dragons);
-//        model.addAttribute("clD", ClDragon.values());
-//        return "main";
-//    }
-    @PostMapping("/main")
-    public String addDragon(@Valid Dragon dragon, BindingResult bindingResult, Model model){
-
-        if (bindingResult.hasErrors()){
-            Map<String, String> errors = ControllerUtils.getErrors(bindingResult);
-            model.mergeAttributes(errors);
-//                      model.addAttribute("dragon", dragon);
-            model.addAttribute("clD", ClDragon.values());
-            return "main";
-        }
-
-            if (!dragonService.addDragon(dragon)) {
-                model.addAttribute("clD", ClDragon.values());
-                return "main";
-            }
-
-            return "redirect:/main";///изменить????????
-}
-
+    @PostMapping("/addDragon")
+    @ResponseBody
+    public ResponseEntity<?> addDragon(@RequestBody Dragon dragon) {
+        Dragon newDragon = new Dragon(dragon.getName(), false,
+                dragon.isPatient(), dragon.getClassDragon());
+        dragonService.saveDragon(newDragon);
+        return new ResponseEntity<Dragon>(newDragon, HttpStatus.CREATED);
+    }
 }

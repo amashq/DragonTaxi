@@ -2,20 +2,21 @@ package com.example.Dragonss.controller;
 
 import com.example.Dragonss.domain.Role;
 import com.example.Dragonss.domain.User;
+import com.example.Dragonss.payload.UserSummary;
+import com.example.Dragonss.security.CurrentUser;
+import com.example.Dragonss.security.UserPrincipal;
 import com.example.Dragonss.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-@Controller
+@CrossOrigin
+@RestController
 public class UserController {
     @Autowired
 //    private UserRepo userRepo;
@@ -50,14 +51,18 @@ public class UserController {
         return "redirect:/user";
     }
 
-    @GetMapping("/user/profile")
-    public String getProfile(Model model, @AuthenticationPrincipal User user){
-        model.addAttribute("username", user.getUsername());
-//        model.addAttribute("password", user.getPassword());//НЕ БЫЛО!!! ДОБАВИЛА!!!
-//        model.addAttribute("phoneNumber", user.getPhoneNumber());
-
-        return "profile";
+    @GetMapping("/user/me")
+    @PreAuthorize("hasAnyAuthority('USER', 'MANAGER', 'DRAGONOLOG', 'CASHIER', 'DRIVER', 'ADMIN')")
+    public UserSummary getCurrentUser(@CurrentUser UserPrincipal currentUser) {
+        return new UserSummary(currentUser.getId(), currentUser.getUsername(), currentUser.getAuthorities());
     }
+//    public String getProfile(Model model, @AuthenticationPrincipal User user){
+//        model.addAttribute("username", user.getUsername());
+////        model.addAttribute("password", user.getPassword());//НЕ БЫЛО!!! ДОБАВИЛА!!!
+////        model.addAttribute("phoneNumber", user.getPhoneNumber());
+//
+//        return "profile";
+//    }
 
     @PostMapping("/user/profile")
     public String updateProfile(@AuthenticationPrincipal User user,

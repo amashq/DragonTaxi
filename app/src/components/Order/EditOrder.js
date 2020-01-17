@@ -30,7 +30,9 @@ class EditOrder extends Component {
 
     render() {
 
+        console.log(this.props.order);
         let dragons = this.props.dragons;
+        let drivers = this.props.drivers;
 
         return (
             <div>
@@ -46,13 +48,13 @@ class EditOrder extends Component {
                         timeTravel: this.props.order.timeTravel,
                         classD: this.props.order.classD,
                         dragon: this.props.order.dragon,
+                        driver: this.props.order.driver.nameDriver,
                         sum: this.props.order.sum
                     }}
 
                     validationSchema={ValidationSchema}
                     onSubmit={(
-                        // this.handleSubmit
-                        values, props) => {
+                        values) => {
                         const Order = {
                             id: values.id,
                             status: values.status,
@@ -69,9 +71,14 @@ class EditOrder extends Component {
                             phoneNumber: values.phoneNumber
                         };
 
+                        const Driver ={
+                            nameDriver: values.driver
+                        };
+
                         const json = {
                             order: Order,
-                            customer: Customer
+                            customer: Customer,
+                            driver: Driver
                         };
                         console.log(json);
                         this.props.handleSubmit(json);
@@ -79,12 +86,10 @@ class EditOrder extends Component {
                     }
                 >
 
-                    {({values, errors, status, touched, setFieldValue, handleChange}) => (
+                    {({values, errors, touched, handleChange}) => (
                 <Form >
-                    {/*onSubmit={ this.props.updateOrder}*/}
-
                         <div className="form-group">
-                            <label hidden htmlFor="inputOrderId2">Id заказа</label>
+                            <label hidden htmlFor="inputOrderId2">Номер заказа</label>
                             <Field hidden type="text" className="form-control" id="inputOrderId2"
                                    value={values.id} name="id"/>
                         </div>
@@ -154,6 +159,19 @@ class EditOrder extends Component {
                             }
                         </Field>
                     </div>
+                    <div className="form-group">
+                        <label htmlFor="inputDriver2">Водитель</label>
+                        <Field as="select" className={"custom-select" + (errors.driver && touched.driver ? ' is-invalid' : '')}
+                               id="inputDrago2" name="driver"
+                               value={values.driver}>
+                            <option  key={0} value={this.props.order.driver.nameDriver}>{this.props.order.driver.nameDriver}</option>
+                            {
+                                drivers.map((driver) =>
+                                    <option  key={driver.id} value={driver.nameDriver}>{driver.nameDriver}</option>
+                                )
+                            }
+                        </Field>
+                    </div>
 
                     <div className="form-group">
                         <label htmlFor="inputTotal2">Сумма заказа</label>
@@ -166,14 +184,11 @@ class EditOrder extends Component {
                     <button type="submit" id="saveEditOrderButton" className="saveEdit btn btn-primary" >Сохранить изменения</button>
                     <Button id="closeEditForm" className="btn btn-secondary" data-dismiss="modal" onClick={this.props.handleCancel}>Закрыть</Button>
 
-
                 </Form>
                     )}
                 </Formik>
 
             </div>
-
-
         );
     }
 }

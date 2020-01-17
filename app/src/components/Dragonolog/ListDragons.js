@@ -1,18 +1,22 @@
 import React, {Component} from 'react';
 import DragonDataService  from "../../service/DragonDataService";
-import {BootstrapTable, TableHeaderColumn} from "react-bootstrap-table";
+import {BootstrapTable, InsertButton, TableHeaderColumn} from "react-bootstrap-table";
 import Button from "react-bootstrap/Button";
-import ListNamesDragons from "./ListNamesDragons";
+import ModalWindow from "../ModalWindow";
+import AddDragon from "./AddDragon";
 
 class ListDragons extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            dragons: []
+            // dragons: [],
+            message: null
         };
         this.refreshDragons = this.refreshDragons.bind(this);
         this.showDragons = this.showDragons.bind(this);
+        this.addDragon = this.addDragon.bind(this);
+        this.handleAddDragon = this.handleAddDragon.bind(this);
     }
 
     componentDidMount() {
@@ -30,16 +34,44 @@ class ListDragons extends Component {
     }
 
     showDragons(classDragon){
-
-        console.log(classDragon);
                 localStorage.setItem('classDragon', classDragon);
                 this.props.history.push('/listNamesDragons');
-}
+    }
+
+    addDragon() {
+        this.openAddModal();
+    }
+
+    handleAddDragon(dragon){
+        DragonDataService.addDragon(dragon)
+            .then(response => {
+
+                console.log(response.data);
+                this.setState({ message: `Дракон добавлен` });
+                this.componentDidMount();
+                this.setState({ isOpen: false });
+            })
+    }
+
+    state = {
+        isOpen: false,
+        title: '',
+        children: ''
+    };
+
+    openAddModal = () => {
+        this.setState({ title: 'Добавление дракона' });
+        this.setState({ children: <AddDragon handleCancel={this.handleCancel}
+                                             handleSubmit={this.handleAddDragon}/> });
+        this.setState({ isOpen: true });
+    };
+
+
+    handleCancel = () => {
+        this.setState({ isOpen: false });
+    };
 
     operateFormatter(cell, row) {
-        console.log(row.classDragon);
-
-        console.log(row.classD);
         return (
             <div>
                 <Button className="btn btn-primary bb" onClick={() => this.showDragons(row.classDragon)}>Показать</Button>
@@ -49,9 +81,15 @@ class ListDragons extends Component {
 
     render() {
         return (
-            <div className="container mt-5 mb-5 mx-auto width-table">
+            <div className="container mt-2 mb-2">
 
-                <BootstrapTable data={ this.state.dragons }>
+                <InsertButton
+                    btnText="Добавить дракона"
+                    className="btn btn-default btn-primary addForm"
+                    onClick={this.addDragon}/>
+
+                {this.state.message && <div className="alert alert-success">{this.state.message}</div>}
+                <BootstrapTable data={ this.state.dragons } search>
                     <TableHeaderColumn  dataField="classDragon" dataSort={ true }  isKey={true} headerAlign='center'
                                         dataAlign='center'>Класс дракона</TableHeaderColumn>
                     <TableHeaderColumn  dataField="countDragons" dataSort={ true } headerAlign='center'
@@ -59,9 +97,16 @@ class ListDragons extends Component {
                     <TableHeaderColumn  dataFormat={(cell, row) => this.operateFormatter(cell, row)}
                                         headerAlign='center' dataAlign='center'
                                         searchable={ false }> Список драконов</TableHeaderColumn>
-
                 </BootstrapTable>
 
+
+                <ModalWindow
+                    title={this.state.title}
+                    isOpen={this.state.isOpen}
+                    onCancel={this.handleCancel}
+                    children={this.state.children}
+                >
+                </ModalWindow>
             </div>
         );
     }

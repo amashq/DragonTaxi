@@ -1,6 +1,7 @@
 package com.example.Dragonss.config;
 
 //import com.example.Dragonss.security.CustomUserDetailsService;
+//import com.example.Dragonss.security.CustomUserDetailsService;
 import com.example.Dragonss.security.JwtAuthenticationEntryPoint;
 import com.example.Dragonss.security.JwtAuthenticationFilter;
 import com.example.Dragonss.service.UserService;
@@ -18,6 +19,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -29,10 +31,7 @@ import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(
-        securedEnabled = true,
-        jsr250Enabled = true,
-        prePostEnabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //    @Autowired
 //    private DataSource dataSource;
@@ -48,7 +47,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new JwtAuthenticationFilter();
     }
 
-
+//
     private final UserService userService;
     public WebSecurityConfig(UserService userService) {
         this.userService = userService;
@@ -69,34 +68,48 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues())
+                .cors()//.configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues())
                 .and()
                 .csrf()
 //                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
 //                .and()
 //                .authorizeRequests()
-                .disable().authorizeRequests()
+                .disable()
+                .exceptionHandling()
+                .authenticationEntryPoint(unauthorizedHandler)
+                .and()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .authorizeRequests()
                 .antMatchers("/order", "/listOrders", "/deleteOrder","/order/{id}",
                         "/getNamesDragon/{classD}","/updateOrder", "/listDragons",
                 "/listDragons/{classDragon}", "/deleteDragon", "/dragon/{id}",
                         "/updateDragon", "/addDragon", "/listRoutes",
                         "/deleteRoute", "/addRoute", "/route/{id}", "/updateRoute",
-                        "/getStartAddress", "/getDestAddress/{start}").permitAll()
-                .antMatchers("/login","/**/*.{js,html,css}").permitAll()
+                        "/getStartAddress", "/getDestAddress/{start}",
+                        "/addDriver", "/allOrders").permitAll()
+                .antMatchers("/login", "/logout", "/signup", "/user/me", "/**/*.{js,html,css}").permitAll()
                 .anyRequest().authenticated()
 //                .and()
 //                .formLogin().loginPage("/login.html")
 //                .successForwardUrl("/").permitAll()
 //                .and().logout().logoutSuccessUrl("/login?logout")
+
+//                .and()
+//                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
+//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         ;
 
-        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtAuthenticationFilter(),
+                UsernamePasswordAuthenticationFilter.class);
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userService) //customUserDetailsService
+        auth.userDetailsService(userService ) // customUserDetailsService
                 .passwordEncoder(passwordEncoder());
+//                .passwordEncoder(NoOpPasswordEncoder.getInstance());
     }
 
 

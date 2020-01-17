@@ -13,41 +13,50 @@ class EditDragon extends Component {
             name: this.props.dragon.name,
             busy: this.props.dragon.busy,
             patient: this.props.dragon.patient,
-            classDragon: this.props.dragon.classDragon
+            classDragon: this.props.dragon.classDragon,
+            busy2: this.props.dragon.busy,
+            patient2: this.props.dragon.patient,
         };
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-
-    handleChange(event) {
-        this.setState({ [event.target.name]: event.target.value });
-    }
-
-
-    handleSubmit(event) {
-
-        event.preventDefault();
-        const Dragon = {
-            id: this.props.dragon.id,
-            name: this.props.dragon.name,
-            busy: '',
-            patient: '',
-            classDragon: this.props.dragon.classDragon
-        };
-
-        this.props.handleSubmit(Dragon);
-    }
-
     componentDidMount() {
         if (this.props.dragon.busy === true) {
-            this.setState( {busy: 'да' } );
-            this.setState( {patient: 'да' } );
+            this.setState( {busy2: 'Да' } );
         } else {
-            this.setState( {busy: 'нет' } );
-            this.setState( {patient: 'нет' } );
+            this.setState( {busy2: 'Нет' } );
         }
+        if (this.props.dragon.patient === true) {
+            this.setState( {patient2: 'Да' } );
+        } else {
+            this.setState( {patient2: 'Нет' } );
+        }
+    }
+
+    handleChange(event) {
+
+        this.setState({ [event.target.name]: event.target.value });
+        if (event.target.value === 'Да' && event.target.name === "patient2") {
+            this.setState( {patient: true } );
+        } else {
+            this.setState( {patient: false } );
+        }
+    }
+
+    handleSubmit(event) {
+        event.preventDefault();
+
+        const Dragon = {
+            id: this.state.id,
+            name: this.state.name,
+            busy: this.state.busy,
+            patient: this.state.patient,
+            classDragon: this.state.classDragon
+        };
+        console.log(Dragon);
+        this.props.handleSubmit(Dragon);
     }
 
 
@@ -78,33 +87,31 @@ class EditDragon extends Component {
                     </div>
                     <div className="form-group">
                         <label htmlFor="inputDragonBusy">В заказе</label>
-                        <select className="custom-select" id="inputDragonBusy"
-                                name="busy" value={this.state.busy} onChange={this.handleChange}
-                                required>
-                            <option value="Да">Да</option>
-                            <option value="Нет">Нет</option>
-                        </select>
+                        {/*<select className="custom-select" id="inputDragonBusy"*/}
+                        {/*        name="busy" value={this.state.busy} onChange={this.handleChange}*/}
+                        {/*        required>*/}
+                        {/*    <option value="Да">Да</option>*/}
+                        {/*    <option value="Нет">Нет</option>*/}
+                        {/*</select>*/}
+                        <input type="text" className="form-control" id="inputDragonBusy"
+                               value={this.state.busy2} name="busy2" readOnly required/>
                     </div>
                     <div className="form-group">
                         <label htmlFor="inputDragonPatient">На лечении</label>
                         <select className="custom-select" id="inputDragonPatient"
-                                name="patient"  value={this.state.patient} onChange={this.handleChange}
+                                name="patient2"  value={this.state.patient2} onChange={this.handleChange}
                                 required>
                             <option value="Да">Да</option>
                             <option value="Нет">Нет</option>
                         </select>
                     </div>
 
-
                     <Button id="saveDragonButton" className="saveEdit btn btn-primary" onClick={this.handleSubmit}>Сохранить изменения</Button>
                     <Button id="closeEditForm" className="btn btn-secondary" data-dismiss="modal" onClick={this.props.handleCancel}>Закрыть</Button>
-
 
                 </form>
 
             </div>
-
-
         );
     }
 }

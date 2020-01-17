@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import Carousell from './Carousell';
 import DatePicker from 'react-datepicker';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { Formik, Form, Field, ErrorMessage, FastField} from 'formik';
 import * as Yup from "yup";
 
 import 'react-datepicker/dist/react-datepicker.css';
@@ -34,7 +34,7 @@ class AddOrder extends Component {
         this.state = {
             startAddress: [],
             start: '',
-            destAddress: [],
+            destAddress:  [],
             dest: ''
         };
 
@@ -71,18 +71,16 @@ class AddOrder extends Component {
     };
 
     handleChangeStart(val) {
-        console.log(val);
         RouteDataService.getDestAddresses(val).then(
             response => {
-                console.log(response.data);
                 this.setState({ destAddress: response.data });
-                return response.data;
             } )
     }
 
     render() {
 
         let addresses = this.state.startAddress;
+        let destAddresses = this.state.destAddress;
 
         return (
             <div>
@@ -94,7 +92,6 @@ class AddOrder extends Component {
                         destAddress: '',
                         timeTravel: new Date(),
                         classD: '',
-                        dest: this.state.destAddress,
                     }}
 
                     validationSchema={ValidationSchema}
@@ -117,11 +114,11 @@ class AddOrder extends Component {
                         };
                         console.log(json);
                         OrderDataService.addOrder(json)
-                            .then(this.openModal).catch()
+                            .then(this.openModal)
                     }
                     }
                 >
-                    {({values, errors, touched,  setFieldValue, handleChange, form}) => (
+                    {({values, errors, touched,  setFieldValue, handleChange}) => (
                     <Form>
                         <div className="container">
 
@@ -148,32 +145,11 @@ class AddOrder extends Component {
                                 <Field as="select" className={"custom-select" + (errors.startAddress && touched.startAddress ? ' is-invalid' : '')}
                                        id="inputStart" name="startAddress"
                                        value={values.startAddress}
-                                       // setFieldValue = {"destAddress" this.handleChangeStart(val)}
-                                    // handleChange={handleChange}
-                                       onChange={val => {
-                                           console.log(val);
-                                           console.log(val.target.value);
+                                       handleChange={handleChange}
+                                       onChange={(val) => {
+                                           this.handleChangeStart(val.target.value) ;
                                            setFieldValue("startAddress", val.target.value);
-                                           let destr = this.handleChangeStart(val.target.value);
-                                           console.log(destr);
-                                           console.log(values.dest);
-                                           console.log(values.destAddress);
-                                           console.log(this.state.dest);
-                                           console.log(this.state.destAddress);
-                                       }}
-                                       // render={({ field, form }) => (
-                                       //     <input
-                                       //         {...field}
-                                       //         onChange={e => {
-                                       //             console.log(e);
-                                       //             const domain = e.target.value;
-                                       //             console.log(domain);
-                                       //             handleChange(e);
-                                       //             form.setFieldValue('destAddress.domain', domain)
-                                       //         }}
-                                       //     />
-                                       // )}
-                                >
+                                       }} >
                                     <option  key={0} value={''}></option>
                                     {
                                         addresses.map((startAddress) =>
@@ -188,34 +164,16 @@ class AddOrder extends Component {
                                 <label  className="col-2 col-form-label" htmlFor="inputDest">Куда</label>
                                 <Field as="select" className={"custom-select" + (errors.destAddress && touched.destAddress ? ' is-invalid' : '')}
                                        id="inputDest" name="destAddress"
-                                       value={values.destAddress} >
+                                       value={values.destAddress } >
                                     <option  key={0} value={''}></option>
                                     {
-                                        values.dest.map((destAddress) =>
-                                            <option  key={destAddress} value={destAddress}>{destAddress}</option>
-                                        )
-                                    }
+                                        destAddresses.map((destAddress) =>
+                                        <option  key={destAddress} value={destAddress}>{destAddress}</option>
+                                    )
+                                }
                                 </Field>
                                 <ErrorMessage name="destAddress" component="div" className="invalid-feedback indent"/>
                             </div>
-
-                                    {/*<div className="input-group">*/}
-                                    {/*    <label className="col-2 col-form-label">Куда</label>*/}
-                                    {/*    <Field as="select" className={"custom-select" + (errors.destAddress && touched.destAddress ? ' is-invalid' : '')}*/}
-                                    {/*            id="inputGroupSelectWhere"*/}
-                                    {/*            name="destAddress" >*/}
-                                    {/*        <option defaultValue > </option>*/}
-                                    {/*        <option value="Главный амбар">Главный амбар</option>*/}
-                                    {/*        <option value="Амбар">Амбар</option>*/}
-                                    {/*        <option value="Песня смерти">Песня смерти</option>*/}
-                                    {/*        <option value="Потерянная бездна">Потерянная бездна</option>*/}
-                                    {/*        <option value="Визжащие леса">Визжащие леса</option>*/}
-                                    {/*        <option value="Озеро Ларсона">Озеро Ларсона</option>*/}
-                                    {/*    </Field>*/}
-                                    {/*    <ErrorMessage name="destAddress" component="div" className="invalid-feedback indent"/>*/}
-                                    {/*</div>*/}
-
-
                                     <div className='input-group date' >
                                         <label className="col-2 col-form-label">Дата поездки</label>
                                         <DatePicker className="form-control"

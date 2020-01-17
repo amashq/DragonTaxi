@@ -1,9 +1,10 @@
 import React, {Component} from 'react';
 import DragonDataService from "../../service/DragonDataService";
-import {BootstrapTable, TableHeaderColumn} from "react-bootstrap-table";
+import {BootstrapTable, InsertButton, TableHeaderColumn} from "react-bootstrap-table";
 import ModalWindow from "../ModalWindow";
 import OrderDataService from "../../service/OrderDataService";
 import EditDragon from "../Dragonolog/EditDragon";
+import AddDragon from "./AddDragon";
 
 class ListNamesDragons extends Component {
 
@@ -13,12 +14,12 @@ class ListNamesDragons extends Component {
             classDragon: localStorage.getItem('classDragon'),
             dragons: [],
             message: null
-            // this.props.location.appState.classDragon
         };
 
         this.deleteRowDragon = this.deleteRowDragon.bind(this);
-        // this.refreshDragons = this.refreshDragons.bind(this);
-        // this.showDragons = this.showDragons.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+        this.updateDragon = this.updateDragon.bind(this);
+        this.listDragons = this.listDragons.bind(this);
     }
 
     componentDidMount() {
@@ -47,6 +48,10 @@ class ListNamesDragons extends Component {
         );
     }
 
+    listDragons() {
+        this.props.history.push(`/listDragons`);
+    }
+
     state = {
         isOpen: false,
         title: '',
@@ -61,10 +66,13 @@ class ListNamesDragons extends Component {
         this.setState({ isOpen: true });
     };
 
-    handleSubmit(json) {
-        console.log(json);
-        OrderDataService.updateDragon(json).then(
+
+    handleSubmit(dragon) {
+        console.log(dragon);
+        DragonDataService.updateDragon(dragon).then(
             response => {
+
+                console.log(response.data);
                 this.setState({ message: `Данные дракона изменены` });
                 this.componentDidMount();
                 this.setState({ isOpen: false });
@@ -86,7 +94,6 @@ class ListNamesDragons extends Component {
                 </a>
                 <a className="lan-remove"
                    onClick={() => this.deleteRowDragon(row) }
-                    // href=" "
                    title="Remove">
                     <i className="fa fa-trash ui"></i>
                 </a>
@@ -97,15 +104,18 @@ class ListNamesDragons extends Component {
 
         function showYesNo(cell, row) {
             if(cell === false) {
-                // row.busy = "нет";
                 return cell="нет"
             } else {
-                // row.busy = "да";
                 return cell="да"}
         }
 
         return (
             <div className="container mt-2 mb-2">
+
+                <InsertButton
+                    btnText="Назад"
+                    className="btn btn-default btn-primary addForm"
+                    onClick={this.listDragons}/>
 
                 {this.state.message && <div className="alert alert-success">{this.state.message}</div>}
                 <BootstrapTable data={ this.state.dragons }

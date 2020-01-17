@@ -1,0 +1,9 @@
+2020-01-17 10:38:17.540 [main] INFO  com.example.Dragonss.Application - Starting Dragon Taxi App
+2020-01-17 10:38:20.738 [restartedMain] INFO  com.example.Dragonss.Application - Starting Dragon Taxi App
+2020-01-17 10:38:29.742 [restartedMain] INFO  com.example.Dragonss.Application - Starting Application on home-pc with PID 10076 (C:\Users\Asus\Desktop\Dragonss\target\classes started by Asus in C:\Users\Asus\Desktop\Dragonss)
+2020-01-17 10:38:29.766 [restartedMain] DEBUG com.example.Dragonss.Application - Running with Spring Boot v2.0.0.RELEASE, Spring v5.0.4.RELEASE
+2020-01-17 10:38:29.767 [restartedMain] INFO  com.example.Dragonss.Application - No active profile set, falling back to default profiles: default
+2020-01-17 10:39:27.490 [localhost-startStop-1] DEBUG com.example.Dragonss.security.JwtAuthenticationFilter - Initializing filter 'jwtAuthenticationFilter'
+2020-01-17 10:39:27.490 [localhost-startStop-1] DEBUG com.example.Dragonss.security.JwtAuthenticationFilter - Filter 'jwtAuthenticationFilter' configured successfully
+2020-01-17 10:39:38.269 [restartedMain] INFO  com.example.Dragonss.Application - Started Application in 77.511 seconds (JVM running for 112.835)
+2020-01-17 15:10:47.387 [http-nio-8080-exec-6] ERROR com.example.Dragonss.security.JwtAuthenticationEntryPoint - Responding with unauthorized error. Message - Full authentication is required to access this resource

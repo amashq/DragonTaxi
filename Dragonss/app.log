@@ -1,0 +1,42 @@
+2020-01-18 02:09:56.930 [main] INFO  com.example.Dragonss.Application - Starting Dragon Taxi App
+2020-01-18 02:09:57.381 [restartedMain] INFO  com.example.Dragonss.Application - Starting Dragon Taxi App
+2020-01-18 02:09:58.852 [restartedMain] INFO  com.example.Dragonss.Application - Starting Application on home-pc with PID 17092 (C:\Users\Asus\Desktop\Dragonss\target\classes started by Asus in C:\Users\Asus\Desktop\Dragonss)
+2020-01-18 02:09:58.855 [restartedMain] DEBUG com.example.Dragonss.Application - Running with Spring Boot v2.0.0.RELEASE, Spring v5.0.4.RELEASE
+2020-01-18 02:09:58.856 [restartedMain] INFO  com.example.Dragonss.Application - No active profile set, falling back to default profiles: default
+2020-01-18 02:10:13.354 [localhost-startStop-1] DEBUG com.example.Dragonss.security.JwtAuthenticationFilter - Initializing filter 'jwtAuthenticationFilter'
+2020-01-18 02:10:13.355 [localhost-startStop-1] DEBUG com.example.Dragonss.security.JwtAuthenticationFilter - Filter 'jwtAuthenticationFilter' configured successfully
+2020-01-18 02:10:19.515 [restartedMain] INFO  com.example.Dragonss.Application - Started Application in 22.101 seconds (JVM running for 26.127)
+2020-01-18 02:12:07.319 [http-nio-8080-exec-10] ERROR com.example.Dragonss.security.JwtAuthenticationEntryPoint - Invalid JWT token
+2020-01-18 02:12:28.716 [http-nio-8080-exec-8] ERROR com.example.Dragonss.security.JwtAuthenticationEntryPoint - Invalid JWT token
+2020-01-18 02:14:20.510 [http-nio-8080-exec-4] ERROR com.example.Dragonss.security.JwtAuthenticationEntryPoint - Invalid JWT token
+2020-01-18 02:14:20.723 [http-nio-8080-exec-4] ERROR com.example.Dragonss.security.JwtAuthenticationEntryPoint - Responding with unauthorized error. Message - Bad credentials
+2020-01-18 02:14:27.947 [http-nio-8080-exec-6] ERROR com.example.Dragonss.security.JwtAuthenticationEntryPoint - Invalid JWT token
+2020-01-18 02:14:27.981 [http-nio-8080-exec-7] ERROR com.example.Dragonss.security.JwtAuthenticationEntryPoint - Invalid JWT token
+2020-01-18 02:14:37.349 [http-nio-8080-exec-9] ERROR com.example.Dragonss.security.JwtAuthenticationEntryPoint - Invalid JWT token
+2020-01-18 02:15:40.082 [http-nio-8080-exec-5] ERROR com.example.Dragonss.security.JwtAuthenticationEntryPoint - Invalid JWT token
+2020-01-18 02:22:30.792 [http-nio-8080-exec-9] ERROR com.example.Dragonss.security.JwtAuthenticationEntryPoint - Invalid JWT token
+2020-01-18 02:22:30.960 [http-nio-8080-exec-9] ERROR com.example.Dragonss.security.JwtAuthenticationEntryPoint - Responding with unauthorized error. Message - Bad credentials
+2020-01-18 02:22:53.979 [http-nio-8080-exec-2] ERROR com.example.Dragonss.security.JwtAuthenticationEntryPoint - Invalid JWT token
+2020-01-18 02:22:54.136 [http-nio-8080-exec-2] ERROR com.example.Dragonss.security.JwtAuthenticationEntryPoint - Responding with unauthorized error. Message - Bad credentials
+2020-01-18 02:23:45.034 [http-nio-8080-exec-5] ERROR com.example.Dragonss.security.JwtAuthenticationEntryPoint - Invalid JWT token
+2020-01-18 02:23:45.195 [http-nio-8080-exec-5] ERROR com.example.Dragonss.security.JwtAuthenticationEntryPoint - Responding with unauthorized error. Message - Bad credentials
+2020-01-18 02:24:33.819 [http-nio-8080-exec-7] ERROR com.example.Dragonss.security.JwtAuthenticationEntryPoint - Invalid JWT token
+2020-01-18 02:24:33.995 [http-nio-8080-exec-7] ERROR com.example.Dragonss.security.JwtAuthenticationEntryPoint - Responding with unauthorized error. Message - Bad credentials
+2020-01-18 02:25:15.484 [http-nio-8080-exec-9] ERROR com.example.Dragonss.security.JwtAuthenticationEntryPoint - Invalid JWT token
+2020-01-18 02:25:15.676 [http-nio-8080-exec-9] ERROR com.example.Dragonss.security.JwtAuthenticationEntryPoint - Responding with unauthorized error. Message - Bad credentials
+2020-01-18 02:26:00.065 [http-nio-8080-exec-10] ERROR com.example.Dragonss.security.JwtAuthenticationEntryPoint - Invalid JWT token
+2020-01-18 02:26:00.294 [http-nio-8080-exec-10] ERROR com.example.Dragonss.security.JwtAuthenticationEntryPoint - Responding with unauthorized error. Message - Bad credentials
+2020-01-18 02:26:27.520 [http-nio-8080-exec-4] ERROR com.example.Dragonss.security.JwtAuthenticationEntryPoint - Invalid JWT token
+2020-01-18 02:26:27.708 [http-nio-8080-exec-4] ERROR com.example.Dragonss.security.JwtAuthenticationEntryPoint - Responding with unauthorized error. Message - Bad credentials
+2020-01-18 02:26:47.970 [http-nio-8080-exec-5] ERROR com.example.Dragonss.security.JwtAuthenticationEntryPoint - Invalid JWT token
+2020-01-18 02:26:48.158 [http-nio-8080-exec-5] ERROR com.example.Dragonss.security.JwtAuthenticationEntryPoint - Responding with unauthorized error. Message - Bad credentials
+2020-01-18 02:27:41.531 [http-nio-8080-exec-7] ERROR com.example.Dragonss.security.JwtAuthenticationEntryPoint - Invalid JWT token
+2020-01-18 02:27:41.725 [http-nio-8080-exec-7] ERROR com.example.Dragonss.security.JwtAuthenticationEntryPoint - Responding with unauthorized error. Message - Bad credentials
+2020-01-18 02:28:15.848 [http-nio-8080-exec-9] ERROR com.example.Dragonss.security.JwtAuthenticationEntryPoint - Invalid JWT token
+2020-01-18 02:28:16.038 [http-nio-8080-exec-9] ERROR com.example.Dragonss.security.JwtAuthenticationEntryPoint - Responding with unauthorized error. Message - Bad credentials
+2020-01-18 02:30:50.528 [http-nio-8080-exec-2] ERROR com.example.Dragonss.security.JwtAuthenticationEntryPoint - Invalid JWT token
+2020-01-18 02:30:50.728 [http-nio-8080-exec-2] ERROR com.example.Dragonss.security.JwtAuthenticationEntryPoint - Responding with unauthorized error. Message - Bad credentials
+2020-01-18 02:34:20.725 [http-nio-8080-exec-5] ERROR com.example.Dragonss.security.JwtAuthenticationEntryPoint - Invalid JWT token
+2020-01-18 02:34:20.910 [http-nio-8080-exec-5] ERROR com.example.Dragonss.security.JwtAuthenticationEntryPoint - Responding with unauthorized error. Message - Bad credentials
+2020-01-18 02:35:19.312 [http-nio-8080-exec-8] ERROR com.example.Dragonss.security.JwtAuthenticationEntryPoint - Invalid JWT token
+2020-01-18 02:35:19.500 [http-nio-8080-exec-8] ERROR com.example.Dragonss.security.JwtAuthenticationEntryPoint - Responding with unauthorized error. Message - Bad credentials
