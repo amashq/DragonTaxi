@@ -1,12 +1,11 @@
 import axios from "axios";
 import {ACCESS_TOKEN} from "../constants/constants";
-
 const BASE_URL = 'http://localhost:8080';
 
 class DragonDataService {
 
     getCountDragons() {
-        return axios.get(BASE_URL + '/listDragons', {
+        return axios.get(BASE_URL + '/listAllDragons', {
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem(ACCESS_TOKEN)
             }
@@ -30,7 +29,6 @@ class DragonDataService {
     };
 
     deleteDragon(dragon) {
-
         return axios.post(BASE_URL + "/deleteDragon", dragon, {
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem(ACCESS_TOKEN)

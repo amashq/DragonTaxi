@@ -19,18 +19,19 @@ public class MvcConfig implements WebMvcConfigurer {
                 .addResourceLocations("/app/src/");
 //        registry.addResourceHandler("/static/**")
 //                .addResourceLocations("classpath:/static/");
+        registry.addResourceHandler("/")
+                .addResourceLocations("/index.html");
 //        registry.addResourceHandler("/img/**")
 //                 .addResourceLocations("classpath:/img/");
     }
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
+        registry.addMapping("/**").allowedOrigins("*")
                 .allowedMethods("HEAD", "PUT", "DELETE", "POST", "GET", "OPTIONS");
     }
 
-//    public void addViewControllers(ViewControllerRegistry registry) {
-//        registry.addViewController("/login").setViewName("login");
+//    public void  addViewController("/login").setViewName("login");
 //    }
 
 }

@@ -1,13 +1,14 @@
 import React, {Component} from 'react';
 import Carousell from './Carousell';
 import DatePicker from 'react-datepicker';
-import { Formik, Form, Field, ErrorMessage, FastField} from 'formik';
+import { Formik, Form, Field, ErrorMessage} from 'formik';
 import * as Yup from "yup";
 
 import 'react-datepicker/dist/react-datepicker.css';
 import OrderDataService from "../../service/OrderDataService";
 import ModalWindow from "../ModalWindow";
 import RouteDataService from "../../service/RouteDataService";
+import ServerError from "../../common/ServerError";
 
 
 const ValidationSchema = Yup.object().shape({
@@ -35,7 +36,8 @@ class AddOrder extends Component {
             startAddress: [],
             start: '',
             destAddress:  [],
-            dest: ''
+            dest: '',
+            serverError: false
         };
 
         this.handleChangeStart = this.handleChangeStart.bind(this);
@@ -44,9 +46,9 @@ class AddOrder extends Component {
     componentDidMount() {
         RouteDataService.getStartAddresses().then(
         response => {
-            console.log(response.data);
-            this.setState({ startAddress: response.data });
-        } )
+            this.setState({ startAddress: response.data }) })
+            .catch(error => {
+                this.setState({ serverError: true })})
     }
 
     handleChangeDate = date => {
@@ -74,13 +76,19 @@ class AddOrder extends Component {
         RouteDataService.getDestAddresses(val).then(
             response => {
                 this.setState({ destAddress: response.data });
-            } )
+            } ).catch(error => {
+            this.setState({ serverError: true })})
     }
 
     render() {
 
         let addresses = this.state.startAddress;
         let destAddresses = this.state.destAddress;
+
+        if(this.state.serverError) {
+            return <ServerError />;
+        }
+
 
         return (
             <div>
@@ -112,9 +120,9 @@ class AddOrder extends Component {
                             order: newOrder,
                             customer: newCustomer
                         };
-                        console.log(json);
                         OrderDataService.addOrder(json)
-                            .then(this.openModal)
+                            .then(this.openModal).catch(error => {
+                            this.setState({ serverError: true })})
                     }
                     }
                 >

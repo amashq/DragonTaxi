@@ -17,12 +17,6 @@ public class Orrder {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
-//    @OneToOne
-//    @JoinColumn (name="point_of_arrival")
-//    private Routes startAddress;
-//    @OneToOne
-//    @JoinColumn (name="point_of_departure")
-//    private Routes destAddress;
     private String startAddress;
     @NotBlank(message = "Пожалуйста заполните данное поле")
     private String destAddress;

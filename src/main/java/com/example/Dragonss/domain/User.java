@@ -43,6 +43,10 @@ public class User  {
         return roles.contains(Role.ADMIN);
     }
 
+//    public boolean isUser(){
+//        return roles.contains(Role.USER);
+//    }
+
     public boolean isManager(){
         return roles.contains(Role.MANAGER);
     }
@@ -55,5 +59,5 @@ public class User  {
         return roles.contains(Role.CASHIER);
     }
 
-    public boolean isDriverr(){ return roles.contains(Role.DRIVER); }
+    public boolean isDriver(){ return roles.contains(Role.DRIVER); }
 }

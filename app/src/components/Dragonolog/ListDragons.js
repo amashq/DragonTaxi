@@ -4,6 +4,8 @@ import {BootstrapTable, InsertButton, TableHeaderColumn} from "react-bootstrap-t
 import Button from "react-bootstrap/Button";
 import ModalWindow from "../ModalWindow";
 import AddDragon from "./AddDragon";
+import NotFound from "../../common/NotFound";
+import ServerError from "../../common/ServerError";
 
 class ListDragons extends Component {
 
@@ -27,10 +29,10 @@ class ListDragons extends Component {
         DragonDataService.getCountDragons()
             .then(
                 response => {
-                    console.log(response.data);
-                    this.setState({ dragons: response.data })
-                }
-            );
+                    this.setState({ dragons: response.data });}
+                ).catch(error => {
+                            this.setState({ serverError: true })
+                    })
     }
 
     showDragons(classDragon){
@@ -45,12 +47,12 @@ class ListDragons extends Component {
     handleAddDragon(dragon){
         DragonDataService.addDragon(dragon)
             .then(response => {
-
-                console.log(response.data);
                 this.setState({ message: `Дракон добавлен` });
                 this.componentDidMount();
                 this.setState({ isOpen: false });
-            })
+            }).catch(error => {
+                this.setState({ serverError: true })
+        });
     }
 
     state = {
@@ -80,6 +82,11 @@ class ListDragons extends Component {
 
 
     render() {
+
+        if(this.state.serverError) {
+            return <ServerError />;
+        }
+
         return (
             <div className="container mt-2 mb-2">
 

@@ -29,7 +29,6 @@ import java.net.URI;
 import java.util.Collections;
 
 @RestController
-//@RequestMapping("/api/auth")
 public class AuthController {
 
     @Autowired
@@ -67,7 +66,6 @@ public class AuthController {
                     HttpStatus.BAD_REQUEST);
         }
 
-        // Creating user's account
         User user = new User(signUpRequest.getUsername(), signUpRequest.getPassword());
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));

@@ -32,14 +32,14 @@ public class DriverController {
         return new ResponseEntity<>(driver, HttpStatus.OK);
     }
 
-    @PostMapping("/addDriver")
-    @ResponseBody
-    public ResponseEntity<?> addDriver(@RequestBody Driver driver) {
-        Driver newDriver = new Driver( driver.getUsername(),driver.getNameDriver(), driver.getPhoneOfDriver(), false);
-        driverService.saveDriver(newDriver);
-
-        return new ResponseEntity<Driver>(newDriver, HttpStatus.CREATED);
-    }
+//    @PostMapping("/addDriver")
+//    @ResponseBody
+//    public ResponseEntity<?> addDriver(@RequestBody Driver driver) {
+//        Driver newDriver = new Driver( driver.getUsername(),driver.getNameDriver(), driver.getPhoneOfDriver(), false);
+//        driverService.saveDriver(newDriver);
+//
+//        return new ResponseEntity<Driver>(newDriver, HttpStatus.CREATED);
+//    }
 
 
     @PreAuthorize("hasAnyAuthority('MANAGER')")

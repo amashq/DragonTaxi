@@ -1,14 +1,11 @@
 package com.example.Dragonss.config;
 
-//import com.example.Dragonss.security.CustomUserDetailsService;
-//import com.example.Dragonss.security.CustomUserDetailsService;
 import com.example.Dragonss.security.JwtAuthenticationEntryPoint;
 import com.example.Dragonss.security.JwtAuthenticationFilter;
 import com.example.Dragonss.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -19,7 +16,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -33,11 +29,6 @@ import java.util.Arrays;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-//    @Autowired
-//    private DataSource dataSource;
-
-//    @Autowired
-//    CustomUserDetailsService customUserDetailsService;
 
     @Autowired
     private JwtAuthenticationEntryPoint unauthorizedHandler;
@@ -47,7 +38,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new JwtAuthenticationFilter();
     }
 
-//
     private final UserService userService;
     public WebSecurityConfig(UserService userService) {
         this.userService = userService;
@@ -68,12 +58,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .cors()//.configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues())
+                .cors()
                 .and()
                 .csrf()
-//                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-//                .and()
-//                .authorizeRequests()
                 .disable()
                 .exceptionHandling()
                 .authenticationEntryPoint(unauthorizedHandler)
@@ -82,24 +69,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/order", "/listOrders", "/deleteOrder","/order/{id}",
-                        "/getNamesDragon/{classD}","/updateOrder", "/listDragons",
-                "/listDragons/{classDragon}", "/deleteDragon", "/dragon/{id}",
-                        "/updateDragon", "/addDragon", "/listRoutes",
-                        "/deleteRoute", "/addRoute", "/route/{id}", "/updateRoute",
-                        "/getStartAddress", "/getDestAddress/{start}",
-                        "/addDriver", "/allOrders").permitAll()
-                .antMatchers("/login", "/logout", "/signup", "/user/me", "/**/*.{js,html,css}").permitAll()
+                .antMatchers("/**").permitAll()
+                .antMatchers(  "/**/*.{js,html,css}").permitAll()
                 .anyRequest().authenticated()
-//                .and()
-//                .formLogin().loginPage("/login.html")
-//                .successForwardUrl("/").permitAll()
-//                .and().logout().logoutSuccessUrl("/login?logout")
-
-//                .and()
-//                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
-//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        ;
+                .and()
+                .exceptionHandling().accessDeniedPage("/error");
 
         http.addFilterBefore(jwtAuthenticationFilter(),
                 UsernamePasswordAuthenticationFilter.class);
@@ -107,7 +81,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userService ) // customUserDetailsService
+        auth.userDetailsService(userService )
                 .passwordEncoder(passwordEncoder());
 //                .passwordEncoder(NoOpPasswordEncoder.getInstance());
     }

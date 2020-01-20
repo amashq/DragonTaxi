@@ -23,6 +23,7 @@ import {ACCESS_TOKEN} from "./constants/constants";
 import Loading from "./common/Loading";
 import NotFound from "./common/NotFound";
 import AllOrders from "./components/Driver/AllOrders";
+import UserPage from "./components/Admin/UserPage";
 
 
 class App extends Component {
@@ -52,7 +53,6 @@ class App extends Component {
         });
         AuthServise.getCurrentUser()
             .then(response => {
-                console.log(response.data.username);
                 if (response.data.role.includes("MANAGER")){
                     this.setState({ isManager: true });
                 } else if (response.data.role.includes("DRAGONOLOG")){
@@ -77,6 +77,8 @@ class App extends Component {
                     this.props.history.push("/listRoutes");
                 }else if (this.state.isDriver){
                     this.props.history.push("/allOrders");
+                }else if (this.state.isAdmin){
+                    this.props.history.push("/users");
                 }
 
             }).catch(error => {
@@ -87,9 +89,7 @@ class App extends Component {
     }
 
     componentDidMount() {
-        // localStorage.removeItem(ACCESS_TOKEN);
         this.loadCurrentUser();
-        console.log(this.state.currentUser)
     }
 
     handleLogin() {
@@ -119,9 +119,6 @@ class App extends Component {
       }
     return (
         <div className="container">
-
-
-          {/*<Navbar />*/}
             <Navbar isAuthenticated={this.state.isAuthenticated}
                        currentUser={this.state.currentUser}
                     isManager={this.state.isManager}
@@ -130,26 +127,26 @@ class App extends Component {
                     isDriver={this.state.isDriver}
                     isAdmin={this.state.isAdmin}
                        onLogout={this.handleLogout} />
-           <Switch>
-          <Route exact path="/" component={Greeting}/>
-          <Route exact path="/about" component={AboutTaxi}/>
-          <Route exact path="/contacts" component={Contacts}/>
-          <Route exact path="/services" component={Services}/>
-          <Route exact path="/order" component={AddOrder}/>
-          <Route exact path="/listOrders" component={OrderBoard}/>
-          <Route exact path="/listDragons" component={ListDragons}/>
-            <Route exact path="/listNamesDragons" component={ListNamesDragons}/>
-           <Route exact path="/listRoutes" component={ListRoutes}/>
-           <Route path="/allOrders" render={(props) => <AllOrders currentUser={this.state.currentUser}  {...props} />}/>
-            <Route path="/login"
-                   render={(props) => <Login onLogin={this.handleLogin} {...props} />} />
-           <Route component={NotFound}/>
-            </Switch>
+                       <Switch>
+                           <Route exact path="/" component={Greeting}/>
+                           <Route exact path="/about" component={AboutTaxi}/>
+                           <Route exact path="/contacts" component={Contacts}/>
+                           <Route exact path="/services" component={Services}/>
+                           <Route exact path="/order" component={AddOrder}/>
+                           <Route exact path="/listOrders" component={OrderBoard}/>
+                           <Route exact path="/listDragons" component={ListDragons}/>
+                           <Route exact path="/listNamesDragons" component={ListNamesDragons}/>
+                           <Route exact path="/listRoutes" component={ListRoutes}/>
+                           <Route exact path="/users" component={UserPage}/>
+                           <Route path="/allOrders" render={(props) => <AllOrders currentUser={this.state.currentUser}  {...props} />}/>
+                           <Route path="/login" render={(props) => <Login onLogin={this.handleLogin} {...props} />} />
+                           <Route path="/error" component={NotFound}/>
+                       </Switch>
             <br/>
             <Footer />
         </div>
   );
-  }tRT
+  }
 }
 
 export default withRouter(App);

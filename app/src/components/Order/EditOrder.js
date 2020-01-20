@@ -30,9 +30,9 @@ class EditOrder extends Component {
 
     render() {
 
-        console.log(this.props.order);
         let dragons = this.props.dragons;
         let drivers = this.props.drivers;
+        if (this.props.order.driver===null) {console.log(1)}
 
         return (
             <div>
@@ -48,7 +48,7 @@ class EditOrder extends Component {
                         timeTravel: this.props.order.timeTravel,
                         classD: this.props.order.classD,
                         dragon: this.props.order.dragon,
-                        driver: this.props.order.driver.nameDriver,
+                        driver: this.props.order.driver===null? '': this.props.order.driver.nameDriver,
                         sum: this.props.order.sum
                     }}
 
@@ -80,7 +80,6 @@ class EditOrder extends Component {
                             customer: Customer,
                             driver: Driver
                         };
-                        console.log(json);
                         this.props.handleSubmit(json);
                     }
                     }
@@ -162,9 +161,10 @@ class EditOrder extends Component {
                     <div className="form-group">
                         <label htmlFor="inputDriver2">Водитель</label>
                         <Field as="select" className={"custom-select" + (errors.driver && touched.driver ? ' is-invalid' : '')}
-                               id="inputDrago2" name="driver"
+                               id="inputDriver2" name="driver"
                                value={values.driver}>
-                            <option  key={0} value={this.props.order.driver.nameDriver}>{this.props.order.driver.nameDriver}</option>
+                            <option  key={0} value={this.props.order.driver===null? '': this.props.order.driver.nameDriver}>
+                                {this.props.order.driver===null? '': this.props.order.driver.nameDriver}</option>
                             {
                                 drivers.map((driver) =>
                                     <option  key={driver.id} value={driver.nameDriver}>{driver.nameDriver}</option>

@@ -1,16 +1,14 @@
 import React, {Component} from 'react';
 import AuthService from "../service/AuthService";
-import { Link } from 'react-router-dom';
 import { ACCESS_TOKEN } from '../constants/constants';
-import { Formik, Form, Field, ErrorMessage, FastField} from 'formik';
+import { Formik, Form, Field, ErrorMessage} from 'formik';
 import * as Yup from "yup";
 import NotFound from "../common/NotFound";
 import ServerError from "../common/ServerError";
-import AuthError from "../common/AuthError";
 
 const ValidationSchema = Yup.object().shape({
     username: Yup.string()
-        .min(6, "Слишком короткое имя!")
+        .min(5, "Слишком короткое имя!")
         .max(20, "Слишком длинное имя!")
         .required("Введите имя"),
     password: Yup.string()
@@ -42,11 +40,6 @@ class Login extends Component {
             return <ServerError />;
         }
 
-        if(this.state.authError) {
-            return <AuthError />;
-        }
-
-
         return (
             <div>
                 <Formik
@@ -65,7 +58,7 @@ class Login extends Component {
                             username: values.username,
                             password: values.password
                         };
-                        console.log(json);
+
                         AuthService.login(json)
                             .then(
                                 response => {
@@ -74,16 +67,16 @@ class Login extends Component {
                                     this.setState({isLoading: false});
                                 })
                             .catch(error => {
-                                console.log(error);
                                 this.setState({isLoading: false});
-                                this.setState({authError: true})
+                                this.setState({message: "Неправильный логин или пароль"})
                             });
                     }
                     }
                 >
-                    {({values, errors, touched,  setFieldValue, handleChange}) => (
+                    {({values, errors, touched}) => (
+
                 <Form >
-                    <div className="container center-block">
+                   <div className="container center-block">
                         <div className="col-sm-5" id="FormaLoginPass">
                             <div className="login">Вход</div>
                             <Field type="text" name="username" value=""
@@ -92,19 +85,20 @@ class Login extends Component {
                             <ErrorMessage name="username" component="div" className="invalid-feedback"/>
 
                             <br/>
-                        <Field type="password" name="password"
+                            <Field type="password" name="password"
                                className={'form-control' + (errors.password && touched.password ? ' is-invalid' : '')}
                                placeholder="Пароль" value={values.password} />
                             <ErrorMessage name="password" component="div" className="invalid-feedback"/>
 
                             <br/>
-            <button id="buttoncomein2" name="singlebutton" className="btn btn-primary"
-                    type="submit" >ВОЙТИ</button>
+                            {this.state.message && <div className="alert alert-success">{this.state.message}</div>}
 
-        </div>
-    </div>
-    </Form>
-                        )}
+                            <button id="buttoncomein2" name="singlebutton" className="btn btn-primary"
+                                    type="submit" >ВОЙТИ</button>
+                        </div>
+                    </div>
+                </Form>
+                    )}
                 </Formik>
             </div>
         );

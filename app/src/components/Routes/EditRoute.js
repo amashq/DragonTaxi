@@ -44,7 +44,6 @@ class EditRoute extends Component {
                             pointOfArrival: values.pointOfArrival,
                             cost: values.cost
                         };
-                        // console.log(Route);
                         this.props.handleSubmit(Route);
                     }
                     }
@@ -86,8 +85,6 @@ class EditRoute extends Component {
                                     <ErrorMessage name="cost" component="div" className="invalid-feedback indent"/>
                                 </div>
 
-
-
                                 <div className="button-place">
                                     <button type="submit" id="saveEditOrderButton" className="saveEdit btn btn-primary" >Добавить</button>
                                     <Button id="closeEditForm" className="btn btn-secondary" data-dismiss="modal" onClick={this.props.handleCancel}>Закрыть</Button>
@@ -97,8 +94,6 @@ class EditRoute extends Component {
                         </Form>
                     )}
                 </Formik>
-
-
             </div>
         );
     }

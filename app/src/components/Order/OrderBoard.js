@@ -41,11 +41,7 @@ class OrderBoard extends Component {
                this.getDrivers();
                 this.getOrderForUpdateOrder(id);
             }).catch(error => {
-            if(error.status === 500) {
                 this.setState({ serverError: true })
-            } else {
-                this.setState({ notFound: true });
-            }
         });
     }
 
@@ -54,11 +50,7 @@ class OrderBoard extends Component {
             response => {
                 this.setState({ drivers: response.data });
             }).catch(error => {
-            if(error.status === 500) {
                 this.setState({ serverError: true })
-            } else {
-                this.setState({ notFound: true });
-            }
         });
 
     }
@@ -66,14 +58,11 @@ class OrderBoard extends Component {
     getOrderForUpdateOrder(id) {
         OrderDataService.getOrder(id).then(
             response => {
+                console.log(response.data)
                 this.setState({ order: response.data });
                 this.openEditModal();
             }).catch(error => {
-            if(error.status === 500) {
                 this.setState({ serverError: true })
-            } else {
-                this.setState({ notFound: true });
-            }
         });
     }
 
@@ -87,11 +76,7 @@ class OrderBoard extends Component {
             .then(response => {
                     this.setState({ orders: response.data })
                 }).catch(error => {
-            if(error.status === 500) {
                 this.setState({ serverError: true })
-            } else {
-                this.setState({ notFound: true });
-            }
         });
     }
 
@@ -101,11 +86,7 @@ class OrderBoard extends Component {
                     this.setState({ message: `Заказ удален успешно` });
                     this.refreshOrders()
                 }).catch(error => {
-            if(error.status === 500) {
                 this.setState({ serverError: true })
-            } else {
-                this.setState({ notFound: true });
-            }
         });
     }
 
@@ -127,20 +108,14 @@ class OrderBoard extends Component {
 
 
     handleSubmit(json) {
-        console.log(json);
         OrderDataService.updateOrder(json).then(
             response => {
-                console.log(response.data);
                 this.setState({ message: `Заказ обновлен` });
                 this.refreshOrders();
                 this.setState({ isOpen: false });
             }
         ).catch(error => {
-            if(error.status === 500) {
                 this.setState({ serverError: true })
-            } else {
-                this.setState({ notFound: true });
-            }
         });
     };
 
@@ -175,7 +150,6 @@ class OrderBoard extends Component {
         }
 
         function showNameDriver(cell, row) {
-            console.log(cell);
             if (cell===null){
                 return null;
             } else {
@@ -202,11 +176,6 @@ class OrderBoard extends Component {
             if (a[field].nameCustomer < b[field].nameCustomer) { return -1;
             } else if (a[field].nameCustomer > b[field].nameCustomer) { return 1;
             } return 0;
-        }
-
-
-        if(this.state.notFound) {
-            return <NotFound />;
         }
 
         if(this.state.serverError) {
@@ -255,7 +224,6 @@ class OrderBoard extends Component {
                     <TableHeaderColumn dataFormat={(cell, row) => this.operateFormatter(cell, row)}
                                        headerAlign='center' data-align="center" >Действия</TableHeaderColumn >
                 </BootstrapTable>
-
 
 
                 <ModalWindow

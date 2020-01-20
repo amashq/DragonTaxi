@@ -21,7 +21,7 @@ public class RoutesController {
     RoutesService routesService;
 
     @PreAuthorize("hasAnyAuthority('CASHIER')")
-    @GetMapping("/listRoutes")
+    @GetMapping("/listAllRoutes")
     public Iterable<Routes> getAllRoutes() {
         return routesService.findAll();
     }

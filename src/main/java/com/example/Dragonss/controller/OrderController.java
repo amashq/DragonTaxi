@@ -12,7 +12,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,8 +45,17 @@ public class OrderController {
         public Driver driver;
     }
 
+    @GetMapping(value = {"/order", "/login", "/contacts", "/about",
+    "/services", "/listOrders", "/listDragons", "/listNamesDragons",
+            "/listRoutes", "/allOrders", "/users"})
+    public void defaultPage(HttpServletRequest request,
+                              HttpServletResponse response)
+            throws IOException, ServletException {
+        request.getRequestDispatcher("/").forward(request, response);
+    }
+
     @PreAuthorize("hasAuthority('MANAGER')")
-    @GetMapping("/listOrders")
+    @GetMapping("/getAllOrders")
     public Iterable<Orrder> getAllOrders() { return orderService.findAll(); }
 
     @PreAuthorize("hasAnyAuthority('MANAGER', 'DRIVER')")
@@ -68,11 +81,13 @@ public class OrderController {
         dragonService.setBusyDragon(json.order.getDragon()); }
 
         json.driver = driverService.setDriver(json.driver);
+            if (!(json.driver == null)) {
         driverService.setBusyDriver(json.driver.getNameDriver());
+        }
 
         json.order.setDriver(json.driver);
         orderService.updateOrder(json.order);
-        return new ResponseEntity<OrderAndCustomer>(json, HttpStatus.OK);
+        return new ResponseEntity<>(json, HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('MANAGER')")
@@ -81,9 +96,11 @@ public class OrderController {
         if (!order.getDragon().equals("Не назначен")) {
             dragonService.setNotBusyDragon(order.getDragon());
         }
+         Driver driver = order.getDriver();
+        if (!(driver == null)) {
+            driverService.setNotBusyDriver(order.getDriver());}
         orderService.deleteOrder(order);
         return new ResponseEntity<String>("Заказ удален", HttpStatus.OK);
-//        else { return ResponseEntity.notFound().build();}
     }
 
     @PreAuthorize("hasAuthority('DRIVER')")
@@ -99,7 +116,7 @@ public class OrderController {
         orderService.updateStatus(order);
     }
 
-    @PostMapping("/order")
+    @PostMapping("/orderpost")
     public ResponseEntity<?> addOrder (
             @Valid @RequestBody OrderAndCustomer json,
             BindingResult bindingResult) {
@@ -110,7 +127,7 @@ public class OrderController {
             for(FieldError error: bindingResult.getFieldErrors()){
                 errorMap.put(error.getField(), error.getDefaultMessage());
             }
-            return new ResponseEntity<Map<String, String>>(errorMap, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(errorMap, HttpStatus.BAD_REQUEST);
 
         }
         json.customer = customerService.addCustomer(json.customer);

@@ -61,21 +61,11 @@ public class UserService implements UserDetailsService {
         return userRepo.findAll();
     }
 
-    public void saveUser(User user, String username, Map<String, String> form) {
-        user.setUsername(username);
-
-        Set<String> roles = Arrays.stream(Role.values())
-                .map(Role::name)
-                .collect(Collectors.toSet());
-
-        user.getRoles().clear();
-
-        for (String key : form.keySet()) {
-            if (roles.contains(key)) {
-                user.getRoles().add(Role.valueOf(key));
-            }
-        }
-        userRepo.save(user);
+    public void updateUser(User user) {
+        User userFromDb = userRepo.findUserById(user.getId());
+        userFromDb.setUsername(user.getUsername());
+        userFromDb.setRoles(user.getRoles());
+        userRepo.save(userFromDb);
     }
 
     public void updateProfile(User user, String password) {

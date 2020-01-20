@@ -26,35 +26,6 @@ public class UserPrincipal implements UserDetails {
 
     private Collection<? extends GrantedAuthority> authorities;
 
-
-//    public UserPrincipal(Long id, String username, String password, Role role) {
-//        this.id = id;
-//        this.username = username;
-//        this.password = password;
-//
-//        List<SimpleGrantedAuthority> authorities = new ArrayList<SimpleGrantedAuthority>();
-//        authorities.add(new SimpleGrantedAuthority( (String) role));
-//
-//        this.authorities = authorities;
-//    }
-
-//    public static UserPrincipal create(User user) {
-//        List<GrantedAuthority> authorities = user.getRoles().stream().map(role ->
-//                new SimpleGrantedAuthority(role.getAuthority()).
-//                        .collect(Collectors.toList());
-//        List<SimpleGrantedAuthority> authorities = new ArrayList<SimpleGrantedAuthority>();
-//
-//        authorities.add(new SimpleGrantedAuthority(user.getRoles()));
-//
-//
-//        return new UserPrincipal(
-//                user.getId(),
-//                user.getUsername(),
-//                user.getPassword(),
-//                authorities
-//        );
-//    }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;

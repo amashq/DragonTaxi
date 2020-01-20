@@ -5,7 +5,7 @@ import { BASE_URL, ACCESS_TOKEN } from '../constants/constants';
 class RouteDataService {
 
     getRoutes() {
-        return axios.get(BASE_URL + '/listRoutes', {
+        return axios.get(BASE_URL + '/listAllRoutes', {
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem(ACCESS_TOKEN)
             }
@@ -59,7 +59,6 @@ class RouteDataService {
             }
         });
     }
-
 }
 
 export default new RouteDataService()

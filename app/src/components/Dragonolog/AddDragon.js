@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import * as Yup from "yup";
 import {ErrorMessage, Field, Form, Formik} from "formik";
 import Button from "react-bootstrap/Button";
-import DragonDataService from "../../service/DragonDataService";
 
 const ValidationSchema = Yup.object().shape({
     name: Yup.string()

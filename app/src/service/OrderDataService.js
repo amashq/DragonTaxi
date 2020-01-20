@@ -3,16 +3,16 @@ import { BASE_URL, ACCESS_TOKEN } from '../constants/constants';
 
 class OrderDataService {
 
-    async getAllOrders() {
-        return await axios.get(BASE_URL + '/listOrders', {
+    getAllOrders() {
+        return axios.get(BASE_URL + '/getAllOrders', {
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem(ACCESS_TOKEN)
             }
         });
     };
 
-    async addOrder(orderAndCustomer) {
-        return await axios.post(BASE_URL + "/order", orderAndCustomer, {
+    addOrder(orderAndCustomer) {
+        return axios.post(BASE_URL + "/orderpost", orderAndCustomer, {
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem(ACCESS_TOKEN)
             }
@@ -35,9 +35,8 @@ class OrderDataService {
         });
     };
 
-    async deleteOrder(order) {
-
-        return await axios.post(BASE_URL + "/deleteOrder", order, {
+    deleteOrder(order) {
+        return axios.post(BASE_URL + "/deleteOrder", order, {
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem(ACCESS_TOKEN)
             }
@@ -62,6 +61,5 @@ class OrderDataService {
         )
     }
 }
-
 
 export default new OrderDataService()

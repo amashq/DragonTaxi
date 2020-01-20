@@ -2,9 +2,8 @@ import React, {Component} from 'react';
 import DragonDataService from "../../service/DragonDataService";
 import {BootstrapTable, InsertButton, TableHeaderColumn} from "react-bootstrap-table";
 import ModalWindow from "../ModalWindow";
-import OrderDataService from "../../service/OrderDataService";
 import EditDragon from "../Dragonolog/EditDragon";
-import AddDragon from "./AddDragon";
+import ServerError from "../../common/ServerError";
 
 class ListNamesDragons extends Component {
 
@@ -26,7 +25,9 @@ class ListNamesDragons extends Component {
         DragonDataService.getNamesDragons(this.state.classDragon).then(
             response => {
                 this.setState({dragons: response.data});
-            } )
+            } ).catch(error => {
+                this.setState({ serverError: true })
+        });
     }
 
     deleteRowDragon(row) {
@@ -35,8 +36,9 @@ class ListNamesDragons extends Component {
                 response => {
                     this.setState({ message: `Дракон успешно удален` });
                     this.componentDidMount()
-                }
-            )
+                }).catch(error => {
+                this.setState({ serverError: true })
+        })
     }
 
     updateDragon(id) {
@@ -44,8 +46,9 @@ class ListNamesDragons extends Component {
             response => {
                 this.setState({ dragon: response.data });
                 this.openEditModal();
-            }
-        );
+            }).catch(error => {
+            this.setState({ serverError: true })
+        })
     }
 
     listDragons() {
@@ -68,16 +71,15 @@ class ListNamesDragons extends Component {
 
 
     handleSubmit(dragon) {
-        console.log(dragon);
         DragonDataService.updateDragon(dragon).then(
             response => {
-
-                console.log(response.data);
                 this.setState({ message: `Данные дракона изменены` });
                 this.componentDidMount();
                 this.setState({ isOpen: false });
             }
-        );
+        ).catch(error => {
+                this.setState({ serverError: true })
+        })
     };
 
     handleCancel = () => {
@@ -107,6 +109,10 @@ class ListNamesDragons extends Component {
                 return cell="нет"
             } else {
                 return cell="да"}
+        }
+
+        if(this.state.serverError) {
+            return <ServerError />;
         }
 
         return (

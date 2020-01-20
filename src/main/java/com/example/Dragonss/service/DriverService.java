@@ -34,7 +34,7 @@ public class DriverService {
 
     public void setNotBusyDriver(Driver driver) {
         Driver driverFromDb = driverRepo.findDriverByNameDriver(driver.getNameDriver());
-        driverFromDb.setBusy(true);
+        driverFromDb.setBusy(false);
         driverRepo.save(driverFromDb);
     }
 }

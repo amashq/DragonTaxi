@@ -75,6 +75,21 @@ class Navbar extends Component {
                     </li>
                 </ul>
             ]
+        } else if(this.props.isAdmin) {
+            menuItems = [
+                <ul key={4} className="navbar navbar-right">
+                    <li key="users" className="nav-item">
+                        <Link to="/users" key="/users" className="nav-link" >Все пользователи
+                            <span className="sr-only"></span>
+                        </Link>
+                    </li>
+                    <li key="logout" className="buttonprivate">
+                        <a className="btn btn-outline-secondary" onClick={this.handleLogoutClick}>Выйти
+                            <span className="sr-only"></span>
+                        </a>
+                    </li>
+                </ul>
+            ]
         } else {
             menuItems = [
                 <ul key={5} className="navbar navbar-right">
@@ -94,9 +109,9 @@ class Navbar extends Component {
                         </Link>
                     </li>
                     <li key="login" className="buttonprivate">
-                        <a className="btn btn-outline-secondary" href="/login">Личный кабинет
+                        <Link to="/login" className="btn btn-outline-secondary" >Личный кабинет
                             <span className="sr-only"></span>
-                        </a>
+                        </Link>
                     </li>
                 </ul>
             ]
@@ -105,7 +120,6 @@ class Navbar extends Component {
         return (
 
             <nav className="navbar navbar-light bg-faded justify-content-end">
-
                 <nav className="nav navbar-nav navbar-left">
                     <a href="/"><img src={Logo} alt="Dragon taxi"/></a>
                 </nav>
@@ -115,9 +129,7 @@ class Navbar extends Component {
                     <div id="menu-line"></div>
                 </div>
             </nav>
-
     );
     }
     }
-
 export default Navbar;

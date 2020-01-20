@@ -1,13 +1,10 @@
 import React, {Component} from 'react';
-import DragonDataService from "../../service/DragonDataService";
-import AddDragon from "../Dragonolog/AddDragon";
-import Button from "react-bootstrap/Button";
 import {BootstrapTable, InsertButton, TableHeaderColumn} from "react-bootstrap-table";
 import ModalWindow from "../ModalWindow";
 import RouteDataService from "../../service/RouteDataService";
 import AddRoute from "./AddRoute";
-import EditDragon from "../Dragonolog/EditDragon";
 import EditRoute from "./EditRoute";
+import ServerError from "../../common/ServerError";
 
 class ListRoutes extends Component {
     constructor(props) {
@@ -22,12 +19,11 @@ class ListRoutes extends Component {
 
     componentDidMount() {
         RouteDataService.getRoutes()
-            .then(
-                response => {
-                    console.log(response.data);
-                    this.setState({ routes: response.data })
-                }
-            );
+            .then(response => {
+                    this.setState({ routes: response.data })}
+            ).catch(error => {
+                this.setState({ serverError: true })
+        });
     }
 
     addRoute() {
@@ -37,14 +33,12 @@ class ListRoutes extends Component {
     handleAddRoute(route){
         RouteDataService.addRoute(route)
             .then(response => {
-
-                console.log(response.data);
                 this.setState({ message: `Маршрут добавлен` });
                 this.componentDidMount();
                 this.setState({ isOpen: false });
-            }
-            )
-                // this.openModal).catch()
+            } ).catch(error => {
+            this.setState({ serverError: true })
+        })
     }
 
     state = {
@@ -65,12 +59,12 @@ class ListRoutes extends Component {
 
     deleteRowRoute(row) {
         RouteDataService.deleteRoute(row)
-            .then(
-                response => {
+            .then(response => {
                     this.setState({ message: `Маршрут успешно удален` });
                     this.componentDidMount()
-                }
-            )
+                }).catch(error => {
+            this.setState({ serverError: true })
+        })
     }
 
     updateRoute(id) {
@@ -78,8 +72,9 @@ class ListRoutes extends Component {
             response => {
                 this.setState({ route: response.data });
                 this.openEditModal();
-            }
-        );
+            }).catch(error => {
+            this.setState({ serverError: true })
+        })
     }
 
     openEditModal = () => {
@@ -96,13 +91,15 @@ class ListRoutes extends Component {
                 this.setState({ message: `Данные маршрута изменены` });
                 this.componentDidMount();
                 this.setState({ isOpen: false });
-            }
-        );
+            }).catch(error => {
+            this.setState({ serverError: true })
+        })
     };
 
     operateFormatter(cell, row) {
         return (
             <div align="center">
+
                 <a className="lan-edit"
                    onClick={() => this.updateRoute(row.id) }
                    title="Edit">
@@ -117,6 +114,12 @@ class ListRoutes extends Component {
     }
 
     render() {
+
+        if(this.state.serverError) {
+            return <ServerError />;
+        }
+
+
         return (
             <div className="container mt-2 mb-2">
 

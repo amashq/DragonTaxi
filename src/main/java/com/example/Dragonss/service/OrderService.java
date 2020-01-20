@@ -22,10 +22,10 @@ public class OrderService {
 
     public void updateOrder(Orrder order){
             Orrder orderFromDb = orderRepo.findOrrderById(order.getId());
-            if (!order.getDragon().equals("Не назначен")) {
-            dragonService.setNotBusyDragon(orderFromDb.getDragon());}
-            if (!order.getDriver().getNameDriver().isEmpty()) {
-            driverService.setNotBusyDriver(orderFromDb.getDriver());}
+//            if (!order.getDragon().equals("Не назначен") ) {
+//            dragonService.setNotBusyDragon(orderFromDb.getDragon());}
+//            if (!order.getDriver().getNameDriver().isEmpty()) {
+//            driverService.setNotBusyDriver(orderFromDb.getDriver());}
 
             orderFromDb.setStatus(order.getStatus());
             orderFromDb.setStartAddress(order.getStartAddress());

@@ -28,5 +28,4 @@ class DriverDataService{
     };
 }
 
-
 export default new DriverDataService();

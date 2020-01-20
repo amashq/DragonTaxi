@@ -42,7 +42,6 @@ class AddRoute extends Component {
                             pointOfArrival: values.pointOfArrival,
                             cost: values.cost
                         };
-
                         this.props.handleSubmit(Route);
                     }
                     }
@@ -79,8 +78,6 @@ class AddRoute extends Component {
                                     <ErrorMessage name="cost" component="div" className="invalid-feedback indent"/>
                                 </div>
 
-
-
                                 <div className="button-place">
                                     <button type="submit" id="saveEditOrderButton" className="saveEdit btn btn-primary" >Добавить</button>
                                     <Button id="closeEditForm" className="btn btn-secondary" data-dismiss="modal" onClick={this.props.handleCancel}>Закрыть</Button>
@@ -90,8 +87,6 @@ class AddRoute extends Component {
                         </Form>
                     )}
                 </Formik>
-
-
             </div>
         );
     }

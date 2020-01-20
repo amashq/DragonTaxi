@@ -10,6 +10,8 @@ import javax.validation.constraints.NotBlank;
 @Entity
 @Data
 @NoArgsConstructor
+@Table( uniqueConstraints = {@UniqueConstraint(
+        columnNames = {"name", "class_dragon"})})
 public class Dragon {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)

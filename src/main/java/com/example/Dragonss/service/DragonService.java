@@ -24,8 +24,9 @@ public class DragonService {
 
     public void setNotBusyDragon(String nameDragon) {
         Dragon dragonFromDb = dragonRepo.findDragonByName(nameDragon);
+        if (!(dragonFromDb == null)) {
         dragonFromDb.setBusy(false);
-        dragonRepo.save(dragonFromDb);
+        dragonRepo.save(dragonFromDb);}
     }
 
 

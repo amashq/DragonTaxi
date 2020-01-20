@@ -5,7 +5,6 @@ import ModalWindow from "../ModalWindow";
 import NotFound from "../../common/NotFound";
 import ServerError from "../../common/ServerError";
 import DriverDataService from "../../service/DriverDataService";
-import EditOrder from "../Order/EditOrder";
 import DetailOrder from "./DetailOrder";
 
 class AllOrders extends Component {
@@ -80,50 +79,8 @@ class AllOrders extends Component {
             }
         });
     }
-    //
-    // getOrderForUpdateOrder(id) {
-    //     OrderDataService.getOrder(id).then(
-    //         response => {
-    //             this.setState({ order: response.data });
-    //             this.openEditModal();
-    //         }).catch(error => {
-    //         if(error.status === 500) {
-    //             this.setState({ serverError: true })
-    //         } else {
-    //             this.setState({ notFound: true });
-    //         }
-    //     });
-    // }
-    //
-    //
-    // addOrder() {
-    //     this.props.history.push(`/order`)
-    // }
-    //
-    // deleteRowOrder(row) {
-    //     OrderDataService.deleteOrder(row)
-    //         .then(response => {
-    //             this.setState({ message: `Заказ удален успешно` });
-    //             this.refreshOrders()
-    //         }).catch(error => {
-    //         if(error.status === 500) {
-    //             this.setState({ serverError: true })
-    //         } else {
-    //             this.setState({ notFound: true });
-    //         }
-    //     });
-    // }
-    //
-    // state = {
-    //     isOpen: false,
-    //     title: '',
-    //     children: ''
-    // };
-
-
 
     operateFormatter(cell, row) {
-        console.log(row);
         if (row.status === "Получен") {
         return (
             <div align="center">

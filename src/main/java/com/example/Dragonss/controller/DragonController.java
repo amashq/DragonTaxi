@@ -31,7 +31,7 @@ public class DragonController {
         public Long countDragons;
     }
 
-    @GetMapping("/listDragons")
+    @GetMapping("/listAllDragons")
     public Iterable<CountDragons> listDragons() {
         List<Object[]> result = dragonService.getCountDragons();
         List<CountDragons> listD = new LinkedList<>();
@@ -54,7 +54,7 @@ public class DragonController {
     @ResponseBody
     public ResponseEntity<?> delDragon(@RequestBody Dragon dragon){
         dragonService.deleteDragon(dragon);
-        return new ResponseEntity<String>("Дракон удален", HttpStatus.OK);
+        return new ResponseEntity<>("Дракон удален", HttpStatus.OK);
     }
 
     @GetMapping("/dragon/{id}")

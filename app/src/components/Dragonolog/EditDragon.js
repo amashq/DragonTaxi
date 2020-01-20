@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import Button from "react-bootstrap/Button";
 
 
-
 class EditDragon extends Component {
 
     constructor(props) {
@@ -55,7 +54,6 @@ class EditDragon extends Component {
             patient: this.state.patient,
             classDragon: this.state.classDragon
         };
-        console.log(Dragon);
         this.props.handleSubmit(Dragon);
     }
 
@@ -87,12 +85,6 @@ class EditDragon extends Component {
                     </div>
                     <div className="form-group">
                         <label htmlFor="inputDragonBusy">В заказе</label>
-                        {/*<select className="custom-select" id="inputDragonBusy"*/}
-                        {/*        name="busy" value={this.state.busy} onChange={this.handleChange}*/}
-                        {/*        required>*/}
-                        {/*    <option value="Да">Да</option>*/}
-                        {/*    <option value="Нет">Нет</option>*/}
-                        {/*</select>*/}
                         <input type="text" className="form-control" id="inputDragonBusy"
                                value={this.state.busy2} name="busy2" readOnly required/>
                     </div>
@@ -110,7 +102,6 @@ class EditDragon extends Component {
                     <Button id="closeEditForm" className="btn btn-secondary" data-dismiss="modal" onClick={this.props.handleCancel}>Закрыть</Button>
 
                 </form>
-
             </div>
         );
     }
